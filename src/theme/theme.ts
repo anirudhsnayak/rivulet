@@ -5,10 +5,18 @@ declare module '@mui/material/styles' {
         button: {
             main: string;
         };
+        tabs: {
+            main: string;
+            tabTextSelected?: string;
+        };
     }
     interface PaletteOptions {
         button?: {
             main: string;
+        };
+        tabs: {
+            main: string;
+            tabTextSelected?: string;
         };
     }
 }
@@ -28,8 +36,12 @@ const darkTheme = createTheme({
             default: '#1b2631',
         },
         button: {
-            main: '#007fbf',
+            main: '#37511fff',
         },
+        tabs: {
+            main: '#416520ff',
+            tabTextSelected: '#4bc2caff',
+        }
     },
 });
 
