@@ -19,15 +19,15 @@ async function computeHash(username: string, password: string) : Promise<string>
 }
 
 
-async function handleLogin(username: string, password: string) {
-    let hashHex = await computeHash(username, password);
+async function handleLogin(username_: string, password: string) {
+    let hashHex = await computeHash(username_, password);
     const response = await fetch('http://localhost:3000/api/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            username: username,
+            username: username_,
             hash: hashHex
         })
     });
@@ -41,15 +41,15 @@ async function handleLogin(username: string, password: string) {
     }
 }
 
-async function handleSignup(username: string, password: string) {
-    let hashHex = await computeHash(username, password);
+async function handleSignup(username_: string, password: string) {
+    let hashHex = await computeHash(username_, password);
     const response = await fetch('http://localhost:3000/api/signup', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            username: username,
+            username: username_,
             hash: hashHex
         })
     });

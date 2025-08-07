@@ -7,7 +7,7 @@ import Tab from '@mui/material/Tab';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import TabContext from '@mui/lab/TabContext';
-import React from 'react';
+import React, { useState } from 'react';
 import { handleLoginSignup } from './LoginSignupHandler';
 
 function LoginTextField(props: any) {
@@ -36,14 +36,16 @@ function LoginTextField(props: any) {
 }
 
 function LoginSignupPortal(props: any) {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
     return (
         <Stack spacing={2}>
             <div style={{
                 textAlign: 'center',
                 fontSize: '24px',
             }}> {props.name} </div>
-            <LoginTextField label="Username" />
-            <LoginTextField label="Password" type="password" />
+            <LoginTextField label="Username" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}/>
+            <LoginTextField label="Password" type="password" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}/>
             <Button
                 fullWidth
                 sx={{
@@ -53,7 +55,7 @@ function LoginSignupPortal(props: any) {
                         backgroundColor: 'primary.light'
                     }
                 }}
-                onClick={() => handleLoginSignup(props.value, 'username', 'password')}
+                onClick={() => handleLoginSignup(props.value, username, password)}
                 variant="contained">{props.name}</Button>
         </Stack>
     )
@@ -73,7 +75,7 @@ function LoginSignupEntry() {
     }));
     
     
-    const [value, setValue] = React.useState('login');
+    const [value, setValue] = useState('login');
     function handleChange(event: React.SyntheticEvent, newValue: string) {
         setValue(newValue);
     }
