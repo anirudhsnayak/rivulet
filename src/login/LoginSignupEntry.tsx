@@ -8,6 +8,7 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import TabContext from '@mui/lab/TabContext';
 import React from 'react';
+import { handleLoginSignup } from './LoginSignupHandler';
 
 function LoginTextField(props: any) {
     return (
@@ -52,6 +53,7 @@ function LoginSignupPortal(props: any) {
                         backgroundColor: 'primary.light'
                     }
                 }}
+                onClick={() => handleLoginSignup(props.value, 'username', 'password')}
                 variant="contained">{props.name}</Button>
         </Stack>
     )
@@ -96,7 +98,7 @@ function LoginSignupEntry() {
                     color: 'text.primary',
                 }} aria-label="basic tabs example">
                     <LoginTab label="Login" value="login"/>
-                    <LoginTab label="Sign Up" value="sign up"/>
+                    <LoginTab label="Sign Up" value="signup"/>
                 </TabList>
                 <div style={{
                     display: 'flex',
@@ -106,8 +108,8 @@ function LoginSignupEntry() {
                     width: '100%',
                     height: '100%',
                 }}>
-                    <TabPanel value="login"> <LoginSignupPortal name="Login"/> </TabPanel>
-                    <TabPanel value="sign up"> <LoginSignupPortal name="Sign Up"/> </TabPanel>
+                    <TabPanel value="login"> <LoginSignupPortal name="Login" value="login"/> </TabPanel>
+                    <TabPanel value="signup"> <LoginSignupPortal name="Sign Up" value="signup"/> </TabPanel>
                 </div>
             </TabContext>
         </Box>
