@@ -23,7 +23,7 @@ declare module '@mui/material/styles' {
 
 const darkTheme = createTheme({
     palette: {
-        mode: 'dark',
+        mode: 'dark', 
         primary: {
             main: '#0d1b2a',
             contrastText: '#688896',
@@ -40,7 +40,7 @@ const darkTheme = createTheme({
         },
         tabs: {
             main: '#416520ff',
-            tabTextSelected: '#4bc2caff',
+            tabTextSelected: '#44c7d0ff',
         }
     },
 });

@@ -34,7 +34,30 @@ function LoginTextField(props: any) {
     );
 }
 
-function LoginEntry() {
+function LoginSignupPortal(props: any) {
+    return (
+        <Stack spacing={2}>
+            <div style={{
+                textAlign: 'center',
+                fontSize: '24px',
+            }}> {props.name} </div>
+            <LoginTextField label="Username" />
+            <LoginTextField label="Password" type="password" />
+            <Button
+                fullWidth
+                sx={{
+                    backgroundColor: 'button.main',
+                    color: 'text.primary',
+                    '&:hover': {
+                        backgroundColor: 'primary.light'
+                    }
+                }}
+                variant="contained">{props.name}</Button>
+        </Stack>
+    )
+}
+
+function LoginSignupEntry() {
     /* React Component */
     const LoginTab = styled(Tab)(({ theme }) => ({
         color: theme.palette.text.primary,
@@ -83,33 +106,12 @@ function LoginEntry() {
                     width: '100%',
                     height: '100%',
                 }}>
-
-                    <TabPanel value="login">
-                        <Stack spacing={2}>
-                            <div style={{
-                                textAlign: 'center',
-                                fontSize: '24px',
-                            }}> Login </div>
-                            <LoginTextField label="Username" />
-                            <LoginTextField label="Password" type="password" />
-                            <Button
-                                fullWidth
-                                sx={{
-                                    backgroundColor: 'button.main',
-                                    color: 'text.primary',
-                                    '&:hover': {
-                                        backgroundColor: 'primary.light'
-                                    }
-                                }}
-                                variant="contained">LOGIN</Button>
-                        </Stack>
-                    </TabPanel>
-                    <TabPanel value="sign up">
-                    </TabPanel>
+                    <TabPanel value="login"> <LoginSignupPortal name="Login"/> </TabPanel>
+                    <TabPanel value="sign up"> <LoginSignupPortal name="Sign Up"/> </TabPanel>
                 </div>
             </TabContext>
         </Box>
     );
 }
 
-export default LoginEntry;
+export default LoginSignupEntry;

@@ -1,4 +1,4 @@
-import LoginEntry from './LoginEntry';
+import LoginSignupEntry from './LoginSignupEntry';
 import Box from '@mui/material/Box';
 
 function Login() {
@@ -13,7 +13,7 @@ function Login() {
                 backgroundColor: 'background.default', // Use theme's default background color
             }}
         >
-            <LoginEntry />
+            <LoginSignupEntry />
         </Box>
     );
 }
