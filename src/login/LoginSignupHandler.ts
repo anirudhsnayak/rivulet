@@ -7,17 +7,20 @@ export function handleLoginSignup(name: string, username: string, password: stri
     }
 }
 
-async function handleLogin(username: string, password: string) {
-    // send a POST request to http://localhost:3000/api/login
-    // with the username and hashed password
-    let saltedPassword = username + password; // simple concatenation for demo purposes
+async function computeHash(username: string, password: string) : Promise<string> {
+    let saltedPassword = username + password;
     let hashedPassword = await window.crypto.subtle.digest(
         'SHA-256',  
         new TextEncoder().encode(saltedPassword)
     );
     let hashArray = Array.from(new Uint8Array(hashedPassword));
     let hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    //securely send a POST request
+    return hashHex;
+}
+
+
+async function handleLogin(username: string, password: string) {
+    let hashHex = await computeHash(username, password);
     const response = await fetch('http://localhost:3000/api/login', {
         method: 'POST',
         headers: {
@@ -39,6 +42,23 @@ async function handleLogin(username: string, password: string) {
 }
 
 async function handleSignup(username: string, password: string) {
-    //TODO: implement signup logic
-    console.log('Signup not implemented yet');
+    let hashHex = await computeHash(username, password);
+    const response = await fetch('http://localhost:3000/api/signup', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            username: username,
+            hash: hashHex
+        })
+    });
+    if (response.ok) {
+        const data = await response.json();
+        console.log('Signup successful:', data);
+        // handle successful signup
+    } else {
+        console.error('Signup failed:', response.statusText);
+        // handle signup failure
+    }
 }
