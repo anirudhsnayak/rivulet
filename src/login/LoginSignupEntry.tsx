@@ -76,7 +76,7 @@ function LoginSignupEntry() {
     
     
     const [value, setValue] = useState('login');
-    function handleChange(event: React.SyntheticEvent, newValue: string) {
+    function handleChange(_: React.SyntheticEvent, newValue: string) {
         setValue(newValue);
     }
     return (
