@@ -12,16 +12,14 @@ export function ServerList() {
             <div>
             <div>
                 <button
-                aria-label="Increment value"
                 onClick={() => dispatch(addGuild())}
                 >
-                Increment
+                Add Server
                 </button>
                 <button
-                aria-label="Decrement value"
                 onClick={() => dispatch(removeGuild())}
                 >
-                Decrement
+                Remove Server
                 </button>
             </div>
             </div>

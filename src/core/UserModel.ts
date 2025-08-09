@@ -34,10 +34,18 @@ export const UserModel = createSlice({
             state.guilds.push(new Guild(state.guilds.length + 1));
         }
     },
+    addChannel: (state) => {
+        state.visibleChannels.push(new Channel(0, state.visibleChannels.length + 1));
+    },
+    removeChannel: (state) => {
+        if (state.visibleChannels.length > 0) {
+            state.visibleChannels.pop();
+        }
+    },
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { addGuild, removeGuild, addNGuilds } = UserModel.actions
+export const { addGuild, removeGuild, addNGuilds, addChannel, removeChannel } = UserModel.actions
 
 export default UserModel.reducer

@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import { ServerList } from './ServerList';
-import UserModel from '../core/UserModel';
+import { ChannelList } from './ChannelList';
 
 function Rivulet() {
     return (
@@ -24,15 +24,17 @@ function Rivulet() {
             >
             <ServerList />
             </Box>
-
-            {/* <Box
+            <Box
                 sx={{
                     flexGrow: 1,
-                    height: '100%',
-                    backgroundColor: 'blue',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: 'primary.main',
                 }}
             >
-            </Box> */}
+            <ChannelList />
+        </Box>   
         </Box>
     );
 }
