@@ -22,13 +22,11 @@ export function ChannelList() {
                 <Box
                     key={index}
                     sx={{
-                        borderRadius: '30%',
                         width: 'auto',
                         margin: '0.5rem 0.5rem',
-                        aspectRatio: '1',
                         backgroundColor: 'primary.main',
                         display: 'flex',
-                        alignItems: 'center',
+                        alignItems: 'top',
                         justifyContent: 'center',
                         color: 'text.primary',
                     }}

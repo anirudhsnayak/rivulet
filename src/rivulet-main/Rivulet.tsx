@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box';
 import { ServerList } from './ServerList';
 import { ChannelList } from './ChannelList';
+import { MessageList } from './MessageList';
 
 function Rivulet() {
     return (
@@ -26,7 +27,8 @@ function Rivulet() {
             </Box>
             <Box
                 sx={{
-                    flexGrow: 1,
+                    height: '100%',
+                    width: '20rem',
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -34,7 +36,29 @@ function Rivulet() {
                 }}
             >
             <ChannelList />
-        </Box>   
+           </Box>   
+           <Box
+                sx={{
+                    flexGrow: 1, 
+                    height: '100%',
+                    backgroundColor: 'background.main',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
+                <MessageList/>
+           </Box>
+           <Box
+                sx={{
+                    width: '15rem',
+                    height: '100%',
+                    backgroundColor: 'primary.main',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
+            
+           </Box>
         </Box>
     );
 }

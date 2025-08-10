@@ -2,15 +2,18 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import Guild from './Guild';
 import Channel from './Channel';
+import Message from './Message';
 
 export interface UserState {
   guilds: Guild[];
   visibleChannels: Channel[];
+  visibleMessages: Message[]
 }
 
 const initialState: UserState = {
   guilds: [],
   visibleChannels: [],
+  visibleMessages: []
 }
 
 export const UserModel = createSlice({
@@ -42,10 +45,18 @@ export const UserModel = createSlice({
             state.visibleChannels.pop();
         }
     },
+    addMessage: (state) => {
+        state.visibleMessages.push(new Message(0, 0, state.visibleMessages.length + 1, 'This is a message'));
+    },
+    removeMessage: (state) => {
+        if (state.visibleMessages.length > 0) {
+            state.visibleMessages.pop();
+        }
+    }
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { addGuild, removeGuild, addNGuilds, addChannel, removeChannel } = UserModel.actions
+export const { addGuild, removeGuild, addNGuilds, addChannel, removeChannel, addMessage, removeMessage } = UserModel.actions
 
 export default UserModel.reducer
