@@ -2,8 +2,13 @@ import Box from '@mui/material/Box';
 import { ServerList } from './ServerList';
 import { ChannelList } from './ChannelList';
 import { MessageList } from './MessageList';
+import { LoadingPage } from './LoadingPage';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../redux/store';
 
 function Rivulet() {
+    const appLoaded = useSelector((state: RootState) => state.RivuletState.appLoaded);
+    if (!appLoaded) return <LoadingPage />;
     return (
         <Box
             sx={{

@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 import userModelReducer from '../core/UserModel';
+import rivuletStateReducer from '../core/RivuletState';
 
 export const store = configureStore({
   reducer: {
     UserModel: userModelReducer,
+    RivuletState: rivuletStateReducer,
   },
 })
 

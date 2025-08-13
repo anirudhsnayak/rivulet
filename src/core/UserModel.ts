@@ -17,7 +17,7 @@ const initialState: UserState = {
 }
 
 export const UserModel = createSlice({
-  name: 'counter',
+  name: 'UserModel',
   initialState,
   reducers: {
     addGuild: (state) => {
