@@ -23,6 +23,7 @@ async function handleLogin(username_: string, password: string) {
     let hashHex = await computeHash(username_, password);
     const response = await fetch('http://localhost:3000/api/login', {
         method: 'POST',
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
         },
@@ -45,6 +46,7 @@ async function handleSignup(username_: string, password: string) {
     let hashHex = await computeHash(username_, password);
     const response = await fetch('http://localhost:3000/api/signup', {
         method: 'POST',
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
         },

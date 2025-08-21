@@ -1,7 +1,10 @@
 async function requestUserModel() {
     const response = await fetch('http://localhost:3000/api/user', {
         method: 'POST',
+        credentials: "include",
         headers: {
+            'Access-Control-Allow-Credentials': 'true',
+            'Access-Control-Allow-Origin': 'http://localhost:3000',
             'Content-Type': 'application/json',
         },
     });
