@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
-import userModelReducer from '../core/UserModel';
-import rivuletStateReducer from '../core/RivuletState';
+import userModelReducer from '../core/stores/UserModel';
+import rivuletStateReducer from '../core/stores/RivuletState';
 
 export const store = configureStore({
   reducer: {

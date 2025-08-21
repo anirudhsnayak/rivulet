@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { setAppLoaded } from '../core/RivuletState';
+import { setAppLoaded } from '../core/stores/RivuletState';
+import { updateUserModel } from '../core/server-interface/UserModelLoader';
 
 function LoadingPage() {
     const dispatch = useDispatch()
     useEffect(()=>{
+        updateUserModel()
         setTimeout(() => {
             dispatch(setAppLoaded(true));
         }, 2000);

@@ -1,4 +1,4 @@
-import { addChannel, removeChannel } from '../core/UserModel';
+import { addChannel, removeChannel } from '../core/stores/UserModel';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../redux/store';
 import Box from '@mui/material/Box';

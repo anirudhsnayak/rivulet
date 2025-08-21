@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../redux/store';
-import { addGuild, removeGuild } from '../core/UserModel';
+import { addGuild, removeGuild } from '../core/stores/UserModel';
 
 export function ServerList() {
     const guilds = useSelector((state: RootState) => state.UserModel.guilds);

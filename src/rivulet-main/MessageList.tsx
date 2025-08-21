@@ -1,4 +1,4 @@
-import { addMessage, removeMessage } from '../core/UserModel';
+import { addMessage, removeMessage } from '../core/stores/UserModel';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../redux/store';
 import Box from '@mui/material/Box';

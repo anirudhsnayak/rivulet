@@ -20,21 +20,19 @@ export const UserModel = createSlice({
   name: 'UserModel',
   initialState,
   reducers: {
+    setGuilds: (state, action: PayloadAction<Guild[]>) => {
+        state.guilds = action.payload;
+    },
     addGuild: (state) => {
         // Redux Toolkit allows us to write "mutating" logic in reducers. It
         // doesn't actually mutate the state because it uses the Immer library,
         // which detects changes to a "draft state" and produces a brand new
         // immutable state based off those changes
-        state.guilds.push(new Guild(0));
+        state.guilds.push(new Guild(state.guilds.length + 1, `Guild ${state.guilds.length + 1}`));
     },
     removeGuild: (state) => {
         if (state.guilds.length > 0) {
             state.guilds.pop();
-        }
-    },
-    addNGuilds: (state, action: PayloadAction<number>) => {
-        for (let i = 0; i < action.payload; i++) {
-            state.guilds.push(new Guild(state.guilds.length + 1));
         }
     },
     addChannel: (state) => {
@@ -57,6 +55,6 @@ export const UserModel = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { addGuild, removeGuild, addNGuilds, addChannel, removeChannel, addMessage, removeMessage } = UserModel.actions
+export const { setGuilds, addGuild, removeGuild, addChannel, removeChannel, addMessage, removeMessage } = UserModel.actions
 
 export default UserModel.reducer
