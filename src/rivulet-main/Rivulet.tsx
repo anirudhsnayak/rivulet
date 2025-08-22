@@ -4,7 +4,7 @@ import { ChannelList } from './ChannelList';
 import { MessageList } from './MessageList';
 import { LoadingPage } from './LoadingPage';
 import { useSelector } from 'react-redux';
-import type { RootState } from '../redux/store';
+import type { RootState } from '../core/stores/store';
 
 function Rivulet() {
     const appLoaded = useSelector((state: RootState) => state.RivuletState.appLoaded);

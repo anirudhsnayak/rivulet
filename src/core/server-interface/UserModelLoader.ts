@@ -1,10 +1,12 @@
+import { Guild } from "../stores/Guild";
+import { setGuilds } from "../stores/UserModel";
+import { store } from "../stores/store";
+
 async function requestUserModel() {
     const response = await fetch('http://localhost:3000/api/user', {
         method: 'POST',
         credentials: "include",
         headers: {
-            'Access-Control-Allow-Credentials': 'true',
-            'Access-Control-Allow-Origin': 'http://localhost:3000',
             'Content-Type': 'application/json',
         },
     });
@@ -12,19 +14,25 @@ async function requestUserModel() {
         const data = await response.json();
 
         console.log('User model loaded:', data);
-        return data; // return the user model data
-        // handle successful user model load
+        return data;
     } else {
         console.error('Failed to load user model:', response.statusText);
-        // handle failure to load user model
     }
 
-}   
+}
+
+interface Server {
+    server_id: number;
+    name: string;
+}
 
 async function updateUserModel() {
     let userModel = await requestUserModel()
-    //convert servers to guilds 
-    console.log(userModel.servers)
+    let servers: Server[] = userModel.servers;
+    userModel.servers = servers.map((server: Server) => {
+        return Guild(server.server_id, server.name);
+    });
+    store.dispatch(setGuilds(userModel.servers));
 }
 
 export { updateUserModel };

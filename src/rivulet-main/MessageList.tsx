@@ -1,6 +1,6 @@
 import { addMessage, removeMessage } from '../core/stores/UserModel';
 import { useSelector, useDispatch } from 'react-redux';
-import type { RootState } from '../redux/store';
+import type { RootState } from '../core/stores/store';
 import Box from '@mui/material/Box';
 
 export function MessageList() {

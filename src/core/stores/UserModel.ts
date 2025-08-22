@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import Guild from './Guild';
+import { Guild } from './Guild';
 import Channel from './Channel';
 import Message from './Message';
 
@@ -24,11 +24,7 @@ export const UserModel = createSlice({
         state.guilds = action.payload;
     },
     addGuild: (state) => {
-        // Redux Toolkit allows us to write "mutating" logic in reducers. It
-        // doesn't actually mutate the state because it uses the Immer library,
-        // which detects changes to a "draft state" and produces a brand new
-        // immutable state based off those changes
-        state.guilds.push(new Guild(state.guilds.length + 1, `Guild ${state.guilds.length + 1}`));
+        state.guilds.push(Guild(state.guilds.length + 1, `Guild ${state.guilds.length + 1}`));
     },
     removeGuild: (state) => {
         if (state.guilds.length > 0) {
