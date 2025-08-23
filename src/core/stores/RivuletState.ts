@@ -1,6 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
+//TODO: appLoaded is obsolete
+
 export interface RivuletState {
   appLoaded: boolean;
 }

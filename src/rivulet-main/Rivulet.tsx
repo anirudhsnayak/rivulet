@@ -2,20 +2,13 @@ import Box from '@mui/material/Box';
 import { ServerList } from './ServerList';
 import { ChannelList } from './ChannelList';
 import { MessageList } from './MessageList';
-import { LoadingPage } from './LoadingPage';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../core/stores/store';
 import { useEffect } from 'react';
 import { updateUserModel } from '../core/server-interface/UserModelLoader';
 
-
-
 function Rivulet() {
-    // useEffect(()=>{
-    //     updateUserModel()
-    // });
-    // const appLoaded = useSelector((state: RootState) => state.RivuletState.appLoaded);
-    // if (!appLoaded) return <LoadingPage />;
+    useEffect(()=>{
+        updateUserModel()
+    });
     return (
         <Box
             sx={{
@@ -29,9 +22,9 @@ function Rivulet() {
         > 
             <Box
                 sx={{
-                    width: '5rem',
+                    width: '4rem',
                     height: '100%',
-                    backgroundColor: 'red',
+                    backgroundColor: 'background.main',
                     borderRight: '2px solid grey.500',
                 }}
             >

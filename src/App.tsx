@@ -1,13 +1,13 @@
 import { StrictMode } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-router-dom";
 import { ThemeProvider } from '@mui/material/styles';
-import darkTheme from './theme/theme';
+import currentTheme from './theme/theme';
 import { Login } from './login/Login';
 import { Rivulet } from './rivulet-main/Rivulet';
 
 export default function App(){
     return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={currentTheme}>
     <StrictMode>
     <Router>
     <nav>

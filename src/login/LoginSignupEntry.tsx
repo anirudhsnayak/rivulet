@@ -15,7 +15,7 @@ function LoginTextField(props: any) {
         <TextField
             fullWidth
             sx={{
-                backgroundColor: 'primary.contrastText',
+                backgroundColor: 'primary.lighter',
                 '& .MuiInputLabel-root': {
                     color: 'text.primary'
                 },

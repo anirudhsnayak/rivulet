@@ -2,6 +2,30 @@ import Box from '@mui/material/Box';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../core/stores/store';
 import { addGuild, removeGuild } from '../core/stores/UserModel';
+import { styled } from '@mui/material/styles';
+import currentTheme from '../theme/theme';
+
+function noIconRenderText(channelName: string): string {
+    return channelName.split(' ').map(word => word[0]).join('').toUpperCase();
+}
+
+const ServerIcon = styled(Box)({
+    borderRadius: '30%',
+    width: 'auto',
+    margin: '0.25rem',
+    aspectRatio: '1',
+    backgroundColor: currentTheme.palette.primary.main,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: 'text.primary',
+    textAlign: 'center',
+    fontSize: '1.25rem',
+    '&:hover': {
+        cursor: 'pointer',
+    },
+});
+
 
 export function ServerList() {
     const guilds = useSelector((state: RootState) => state.UserModel.guilds);
@@ -9,38 +33,12 @@ export function ServerList() {
 
     return (
         <div>
-            <div>
-            <div>
-                <button
-                onClick={() => dispatch(addGuild())}
-                >
-                Add Server
-                </button>
-                <button
-                onClick={() => dispatch(removeGuild())}
-                >
-                Remove Server
-                </button>
-            </div>
-            </div>
             {guilds.map((guild, index) => (
-            <Box
-                key={index}
-                sx={{
-                borderRadius: '30%',
-                width: 'auto',
-                margin: '0.5rem',
-                aspectRatio: '1',
-                backgroundColor: 'primary.main',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'text.primary',
-                }}
-            >
-                {guild.guildName}
-            </Box>
+            <ServerIcon key={index}>
+                {noIconRenderText(guild.guildName)}
+            </ServerIcon>
             ))}
+            <ServerIcon>+</ServerIcon>
         </div>
     );
     

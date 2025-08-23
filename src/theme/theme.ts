@@ -4,6 +4,7 @@ declare module '@mui/material/styles' {
     interface Palette {
         button: {
             main: string;
+            hoverTextColor: string;
         };
         tabs: {
             main: string;
@@ -13,12 +14,20 @@ declare module '@mui/material/styles' {
     interface PaletteOptions {
         button?: {
             main: string;
+            hoverTextColor: string;
         };
         tabs: {
             main: string;
             tabTextSelected?: string;
         };
     }
+    interface PaletteColor { //primary
+        lighter?: string;
+    }
+    interface SimplePaletteColorOptions {
+        lighter?: string;
+    }
+
 }
 
 const darkTheme = createTheme({
@@ -26,7 +35,7 @@ const darkTheme = createTheme({
         mode: 'dark', 
         primary: {
             main: '#0d1b2a',
-            contrastText: '#688896',
+            lighter: '#688896',
         },
         text: {
             primary: '#ffffff',
@@ -37,6 +46,7 @@ const darkTheme = createTheme({
         },
         button: {
             main: '#37511fff',
+            hoverTextColor: '#44c7d0ff',
         },
         tabs: {
             main: '#416520ff',
@@ -45,4 +55,6 @@ const darkTheme = createTheme({
     },
 });
 
-export default darkTheme;
+let currentTheme = darkTheme;
+
+export default currentTheme;

@@ -29,6 +29,7 @@ export function ChannelList() {
                         alignItems: 'top',
                         justifyContent: 'center',
                         color: 'text.primary',
+                        textAlign: 'center',
                     }}
                 >
                     {channels[index].channelName}
