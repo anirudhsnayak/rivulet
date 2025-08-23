@@ -5,12 +5,7 @@ import { updateUserModel } from '../core/server-interface/UserModelLoader';
 
 function LoadingPage() {
     const dispatch = useDispatch()
-    useEffect(()=>{
-        updateUserModel()
-        setTimeout(() => {
-            dispatch(setAppLoaded(true));
-        }, 2000);
-    });
+    
     return (
         <div className="loading-page">
             <h1>Loading...</h1>

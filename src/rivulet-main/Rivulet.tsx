@@ -5,10 +5,17 @@ import { MessageList } from './MessageList';
 import { LoadingPage } from './LoadingPage';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../core/stores/store';
+import { useEffect } from 'react';
+import { updateUserModel } from '../core/server-interface/UserModelLoader';
+
+
 
 function Rivulet() {
-    const appLoaded = useSelector((state: RootState) => state.RivuletState.appLoaded);
-    if (!appLoaded) return <LoadingPage />;
+    // useEffect(()=>{
+    //     updateUserModel()
+    // });
+    // const appLoaded = useSelector((state: RootState) => state.RivuletState.appLoaded);
+    // if (!appLoaded) return <LoadingPage />;
     return (
         <Box
             sx={{
