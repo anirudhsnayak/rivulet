@@ -1,16 +1,17 @@
 import Box from '@mui/material/Box';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../core/stores/store';
-import { addGuild, removeGuild } from '../core/stores/UserModel';
+import { setCurrentGuildById } from '../core/stores/UserModel';
 import { styled } from '@mui/material/styles';
 import currentTheme from '../theme/theme';
 import { setCreatingServer } from '../core/stores/RivuletState';
 
 function noIconRenderText(channelName: string): string {
+    if(channelName == undefined || channelName.length == 0) return '?';
     return channelName.split(' ').map(word => word[0]).join('').toUpperCase();
 }
 
-const ServerIcon = styled(Box)({
+const ServerIcon = styled(Box)<{ selected?: boolean }>(({ selected }) => ({
     borderRadius: '30%',
     width: 'auto',
     margin: '0.25rem',
@@ -22,20 +23,27 @@ const ServerIcon = styled(Box)({
     color: 'text.primary',
     textAlign: 'center',
     fontSize: '1.25rem',
+    border: selected ? `2px solid ${currentTheme.palette.text.primary}` : 'none',
     '&:hover': {
         cursor: 'pointer',
     },
-});
+}));
 
 
 export function ServerList() {
     const guilds = useSelector((state: RootState) => state.UserModel.guilds);
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+
+    const selectedGuild = useSelector((state: RootState) => state.UserModel.currentGuildId);
 
     return (
         <div>
             {guilds.map((guild, index) => (
-            <ServerIcon key={index}>
+            <ServerIcon 
+                key={index}
+                selected={selectedGuild === guild.guildId}
+                onClick={() => dispatch(setCurrentGuildById(guild.guildId))}
+            >
                 {noIconRenderText(guild.guildName)}
             </ServerIcon>
             ))}

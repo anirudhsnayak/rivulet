@@ -6,12 +6,14 @@ import Message from './Message';
 
 export interface UserState {
   guilds: Guild[];
+  currentGuildId: Number;
   visibleChannels: Channel[];
   visibleMessages: Message[]
 }
 
 const initialState: UserState = {
   guilds: [],
+  currentGuildId: -1,
   visibleChannels: [],
   visibleMessages: []
 }
@@ -46,11 +48,15 @@ export const UserModel = createSlice({
         if (state.visibleMessages.length > 0) {
             state.visibleMessages.pop();
         }
+    },
+    setCurrentGuildById: (state, action: PayloadAction<Number>) => {
+        //we are given the guild id, we need to find the guild with that id and set it as the current guild
+        state.currentGuildId = action.payload;
     }
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { setGuilds, addGuild, removeGuild, addChannel, removeChannel, addMessage, removeMessage } = UserModel.actions
+export const { setGuilds, addGuild, removeGuild, addChannel, removeChannel, addMessage, removeMessage, setCurrentGuildById } = UserModel.actions
 
 export default UserModel.reducer

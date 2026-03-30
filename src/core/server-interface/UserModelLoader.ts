@@ -18,19 +18,17 @@ async function requestUserModel() {
     } else {
         console.error('Failed to load user model:', response.statusText);
     }
-
 }
 
 interface Server {
     server_id: number;
-    name: string;
+    server_name: string;
 }
 
 async function updateUserModel() {
-    let userModel = await requestUserModel()
-    let servers: Server[] = userModel.servers;
-    userModel.servers = servers.map((server: Server) => {
-        return Guild(server.server_id, server.name);
+    const userModel = await requestUserModel();
+     userModel.servers = userModel.servers.map((server: Server) => {
+        return Guild(server.server_id, server.server_name);
     });
     store.dispatch(setGuilds(userModel.servers));
 }
