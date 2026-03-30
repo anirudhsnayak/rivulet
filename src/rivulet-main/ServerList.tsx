@@ -4,6 +4,7 @@ import type { RootState } from '../core/stores/store';
 import { addGuild, removeGuild } from '../core/stores/UserModel';
 import { styled } from '@mui/material/styles';
 import currentTheme from '../theme/theme';
+import { setCreatingServer } from '../core/stores/RivuletState';
 
 function noIconRenderText(channelName: string): string {
     return channelName.split(' ').map(word => word[0]).join('').toUpperCase();
@@ -38,7 +39,9 @@ export function ServerList() {
                 {noIconRenderText(guild.guildName)}
             </ServerIcon>
             ))}
-            <ServerIcon>+</ServerIcon>
+            <ServerIcon
+                onClick={() => dispatch(setCreatingServer(true))}
+            >+</ServerIcon>
         </div>
     );
     

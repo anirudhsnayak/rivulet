@@ -1,4 +1,3 @@
-import { TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -9,31 +8,8 @@ import TabPanel from '@mui/lab/TabPanel';
 import TabContext from '@mui/lab/TabContext';
 import React, { useState } from 'react';
 import { handleLoginSignup } from './LoginSignupHandler';
-
-function LoginTextField(props: any) {
-    return (
-        <TextField
-            fullWidth
-            sx={{
-                backgroundColor: 'primary.lighter',
-                '& .MuiInputLabel-root': {
-                    color: 'text.primary'
-                },
-                '& .MuiFilledInput-input': {
-                    color: 'text.primary',
-                },
-                '& .MuiInputLabel-root.Mui-focused': {
-                    color: 'text.secondary'
-                }
-            }}
-            label={props.label}
-            color='primary'
-            variant="filled"
-            margin="normal"
-            {...props}
-        />
-    );
-}
+import { RivuletTextField } from '../components/RivuletTextField';
+import { RivuletButton } from '../components/RivuletButton';
 
 function LoginSignupPortal(props: any) {
     const [username, setUsername] = useState('');
@@ -44,31 +20,19 @@ function LoginSignupPortal(props: any) {
                 textAlign: 'center',
                 fontSize: '24px',
             }}> {props.name} </div>
-            <LoginTextField label="Username" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}/>
-            <LoginTextField label="Password" type="password" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}/>
-            <Button
-                fullWidth
-                sx={{
-                    backgroundColor: 'button.main',
-                    color: 'text.primary',
-                    '&:hover': {
-                        backgroundColor: 'primary.light'
-                    }
-                }}
-                onClick={() => handleLoginSignup(props.value, username, password)}
-                variant="contained">{props.name}</Button>
+            <RivuletTextField label="Username" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}/>
+            <RivuletTextField label="Password" type="password" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}/>
+            <RivuletButton name={props.name} onClick={() => handleLoginSignup(props.value, username, password)}/>
         </Stack>
     )
 }
 
 function LoginSignupEntry() {
-    /* React Component */
     const LoginTab = styled(Tab)(({ theme }) => ({
         color: theme.palette.text.primary,
         '&.Mui-selected': {
             color: theme.palette.tabs.tabTextSelected,
         },
-        
         // '&:hover': {
         //     color: theme.palette.button.main,
         // },

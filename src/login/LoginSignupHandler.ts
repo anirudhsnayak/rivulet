@@ -21,7 +21,7 @@ async function computeHash(username: string, password: string) : Promise<string>
 
 async function handleLogin(username_: string, password: string) {
     let hashHex = await computeHash(username_, password);
-    const response = await fetch('http://localhost:3000/api/login', {
+    const response = await fetch('http://localhost:3000/api/account/login', {
         method: 'POST',
         credentials: "include",
         headers: {
@@ -44,7 +44,7 @@ async function handleLogin(username_: string, password: string) {
 
 async function handleSignup(username_: string, password: string) {
     let hashHex = await computeHash(username_, password);
-    const response = await fetch('http://localhost:3000/api/signup', {
+    const response = await fetch('http://localhost:3000/api/account/signup', {
         method: 'POST',
         credentials: "include",
         headers: {

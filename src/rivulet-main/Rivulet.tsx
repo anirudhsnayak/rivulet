@@ -4,6 +4,7 @@ import { ChannelList } from './ChannelList';
 import { MessageList } from './MessageList';
 import { useEffect } from 'react';
 import { updateUserModel } from '../core/server-interface/UserModelLoader';
+import { ServerCreationModal } from '../server-creation/ServerCreationModal';
 
 function Rivulet() {
     useEffect(()=>{
@@ -20,6 +21,8 @@ function Rivulet() {
                 backgroundColor: 'background.default', // Use theme's default background color
             }} 
         > 
+            <ServerCreationModal/>
+            {/* Server List */}
             <Box
                 sx={{
                     width: '4rem',
@@ -30,6 +33,7 @@ function Rivulet() {
             >
             <ServerList />
             </Box>
+            {/* Channel List */}
             <Box
                 sx={{
                     height: '100%',
@@ -42,6 +46,7 @@ function Rivulet() {
             >
             <ChannelList />
            </Box>   
+            {/* Message List */}
            <Box
                 sx={{
                     flexGrow: 1, 
