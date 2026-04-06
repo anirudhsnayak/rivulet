@@ -4,9 +4,9 @@ import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import type { RootState } from '../core/stores/store';
 import { useSelector, useDispatch } from 'react-redux';
-import { setCreatingServer } from '../core/stores/RivuletState';
+import { setCreatingSpace, SpaceCreationState } from '../core/stores/RivuletState';
 import { RivuletTextField } from '../components/RivuletTextField';
-import { handleServerCreation } from './ServerCreationHandler';
+import { handleSpaceCreation } from './SpaceCreationHandler';
 import { useState } from 'react';
 
 const style = {
@@ -21,35 +21,41 @@ const style = {
     padding: '4rem',
 }
 
-export function ServerCreationModal() {
-    const creatingServer = useSelector(
-         (state: RootState) => state.RivuletState.creatingServer
+export function SpaceCreationModal() {
+    const creatingSpace = useSelector(
+         (state: RootState) => state.RivuletState.creatingSpace
     );
     const dispatch = useDispatch();
-    const [serverName, setServerName] = useState('');
+    const [spaceName, setSpaceName] = useState('');
 
-    const handleCreateClick = async () => {
-        if (serverName.trim()) {
-            await handleServerCreation(serverName, dispatch);
-            setServerName('');
-            dispatch(setCreatingServer(false));
+    const handleCreateClick = async (guildId: number) => {
+        const spaceParams = {
+            guildId: guildId,
+            spaceName: spaceName,
+        };
+        if (spaceName.trim()) {
+            await handleSpaceCreation(creatingSpace, spaceParams, dispatch);
+            setSpaceName('');
+            dispatch(setCreatingSpace(SpaceCreationState.NotCreatingSpace));
         }
     };
-
+    const spaceType = (creatingSpace === SpaceCreationState.CreatingServer ? "Server" : "Channel");
+    const guildId = useSelector((state: RootState) => state.UserModel.currentGuildId);
     return (
     <>
-        <Modal open={creatingServer} onClose={() => dispatch(setCreatingServer(false))}>
+        <Modal open={creatingSpace != SpaceCreationState.NotCreatingSpace} 
+               onClose={() => dispatch(setCreatingSpace(SpaceCreationState.NotCreatingSpace))}>
         <Box sx={style}>
             <Typography sx={{ color: 'text.primary' }} variant="h6" component="h2">
-            Create a New Server
+            Create a New {spaceType}
             </Typography>
 
             {/* Server Name */}
             <RivuletTextField 
-                label="Server Name" 
+                label = {`${spaceType} Name`}
                 sx={{ width: '100%' }} 
-                value={serverName}
-                onChange={(e: any) => setServerName(e.target.value)}
+                value={spaceName}
+                onChange={(e: any) => setSpaceName(e.target.value)}
             />
             {/* Box that contains the Create Server button, center contents and self*/}
             <Box sx={{ 
@@ -59,8 +65,8 @@ export function ServerCreationModal() {
                 alignItems: 'center',
              }}>
                 <RivuletButton
-                    name="Create Server"
-                    onClick={handleCreateClick}
+                    name={`Create ${spaceType}`}
+                    onClick={() => handleCreateClick(guildId)}
                 />
             </Box>
         </Box>

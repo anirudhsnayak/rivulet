@@ -4,7 +4,8 @@ import type { RootState } from '../core/stores/store';
 import { setCurrentGuildById } from '../core/stores/UserModel';
 import { styled } from '@mui/material/styles';
 import currentTheme from '../theme/theme';
-import { setCreatingServer } from '../core/stores/RivuletState';
+import { setCreatingSpace } from '../core/stores/RivuletState';
+import { SpaceCreationState } from '../core/stores/RivuletState';
 
 function noIconRenderText(channelName: string): string {
     if(channelName == undefined || channelName.length == 0) return '?';
@@ -48,7 +49,7 @@ export function ServerList() {
             </ServerIcon>
             ))}
             <ServerIcon
-                onClick={() => dispatch(setCreatingServer(true))}
+                onClick={() => dispatch(setCreatingSpace(SpaceCreationState.CreatingServer))}
             >+</ServerIcon>
         </div>
     );

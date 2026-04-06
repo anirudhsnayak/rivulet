@@ -1,11 +1,15 @@
 
-export default class Channel {
+export interface Channel {
     parentGuildId: number;
     channelId: number;
     channelName: string;
-    constructor(parentGuildId: number, channelId: number) {
-        this.parentGuildId = parentGuildId;
-        this.channelId = channelId;
-        this.channelName = `Channel ${channelId}`; // Default name based on ID
-    }
+}
+
+//to make redux happy, we need to make a factory function that creates a new channel object instead of using the constructor directly. 
+export function Channel(parentGuildId: number, channelId: number): Channel {
+    return {
+        parentGuildId,
+        channelId,
+        channelName: `Channel ${channelId}`
+    };
 }

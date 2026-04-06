@@ -1,6 +1,7 @@
 import { Guild } from "../stores/Guild";
-import { setGuilds } from "../stores/UserModel";
+import { setCurrentGuildById, setGuilds } from "../stores/UserModel";
 import { store } from "../stores/store";
+import { requestChannels } from "./ChannelAPI";
 
 async function requestUserModel() {
     const response = await fetch('http://localhost:3000/api/user', {
@@ -20,17 +21,21 @@ async function requestUserModel() {
     }
 }
 
-interface Server {
+interface ServerDB {
     server_id: number;
     server_name: string;
 }
 
 async function updateUserModel() {
     const userModel = await requestUserModel();
-     userModel.servers = userModel.servers.map((server: Server) => {
+     userModel.servers = userModel.servers.map((server: ServerDB) => {
         return Guild(server.server_id, server.server_name);
     });
     store.dispatch(setGuilds(userModel.servers));
+    let currentGuildId = store.getState().UserModel.currentGuildId;
+    const currentChannels = await requestChannels(currentGuildId);
+    console.log('Current channels loaded:', currentChannels);
 }
+
 
 export { updateUserModel };

@@ -3,14 +3,22 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 
 //TODO: appLoaded is obsolete
 
+export const SpaceCreationState = {
+  NotCreatingSpace: 0,
+  CreatingServer: 1,
+  CreatingChannel: 2,
+} as const;
+
+export type SpaceCreationState = typeof SpaceCreationState[keyof typeof SpaceCreationState];
+
 export interface RivuletState {
   appLoaded: boolean;
-  creatingServer: boolean;
+  creatingSpace: SpaceCreationState;
 }
 
 const initialState: RivuletState = {
   appLoaded: false,
-  creatingServer: false,
+  creatingSpace: SpaceCreationState.NotCreatingSpace,
 }
 
 export const RivuletState = createSlice({
@@ -20,11 +28,11 @@ export const RivuletState = createSlice({
         setAppLoaded: (state, action: PayloadAction<boolean>) => {
             state.appLoaded = action.payload;
         },
-        setCreatingServer: (state, action: PayloadAction<boolean>) => {
-            state.creatingServer = action.payload;
+        setCreatingSpace: (state, action: PayloadAction<SpaceCreationState>) => {
+            state.creatingSpace = action.payload;
         }
     },
 });
 
-export const { setAppLoaded, setCreatingServer } = RivuletState.actions;
+export const { setAppLoaded, setCreatingSpace } = RivuletState.actions;
 export default RivuletState.reducer;

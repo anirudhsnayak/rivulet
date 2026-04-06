@@ -1,12 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { Guild } from './Guild';
-import Channel from './Channel';
+import { Channel } from './Channel';
 import Message from './Message';
+import { current } from '@reduxjs/toolkit';
 
 export interface UserState {
   guilds: Guild[];
-  currentGuildId: Number;
+  currentGuildId: number;
+  currentChannelId: number;
   visibleChannels: Channel[];
   visibleMessages: Message[]
 }
@@ -14,6 +16,7 @@ export interface UserState {
 const initialState: UserState = {
   guilds: [],
   currentGuildId: -1,
+  currentChannelId: -1,
   visibleChannels: [],
   visibleMessages: []
 }
@@ -24,6 +27,9 @@ export const UserModel = createSlice({
   reducers: {
     setGuilds: (state, action: PayloadAction<Guild[]>) => {
         state.guilds = action.payload;
+        if(state.currentGuildId == -1 && state.guilds.length > 0) {
+            state.currentGuildId = state.guilds[0].guildId;
+        }
     },
     addGuild: (state) => {
         state.guilds.push(Guild(state.guilds.length + 1, `Guild ${state.guilds.length + 1}`));
@@ -34,7 +40,7 @@ export const UserModel = createSlice({
         }
     },
     addChannel: (state) => {
-        state.visibleChannels.push(new Channel(0, state.visibleChannels.length + 1));
+        state.visibleChannels.push(Channel(0, state.visibleChannels.length + 1));
     },
     removeChannel: (state) => {
         if (state.visibleChannels.length > 0) {
@@ -49,14 +55,20 @@ export const UserModel = createSlice({
             state.visibleMessages.pop();
         }
     },
-    setCurrentGuildById: (state, action: PayloadAction<Number>) => {
-        //we are given the guild id, we need to find the guild with that id and set it as the current guild
+    setCurrentGuildById: (state, action: PayloadAction<number>) => {
         state.currentGuildId = action.payload;
+    },
+    setCurrentChannelById: (state, action: PayloadAction<number>) => {
+        state.currentChannelId = action.payload;
     }
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { setGuilds, addGuild, removeGuild, addChannel, removeChannel, addMessage, removeMessage, setCurrentGuildById } = UserModel.actions
+export const { 
+    setGuilds, addGuild, removeGuild, setCurrentGuildById,
+    addChannel, removeChannel, setCurrentChannelById,
+    addMessage, removeMessage
+} = UserModel.actions
 
 export default UserModel.reducer
