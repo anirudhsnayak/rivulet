@@ -3,7 +3,7 @@ import { ServerList } from './ServerList';
 import { ChannelList } from './ChannelList';
 import { MessageList } from './MessageList';
 import { useEffect } from 'react';
-import { updateUserModel } from '../core/server-interface/UserModelAPI';
+import { updateUserModel } from '../core/server-api/UserModelAPI';
 import { SpaceCreationModal } from '../space-creation/SpaceCreationModal';
 
 function Rivulet() {

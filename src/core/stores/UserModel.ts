@@ -40,12 +40,15 @@ export const UserModel = createSlice({
         }
     },
     addChannel: (state) => {
-        state.visibleChannels.push(Channel(0, state.visibleChannels.length + 1));
+        state.visibleChannels.push(Channel(0, state.visibleChannels.length + 1, "Channel"));
     },
     removeChannel: (state) => {
         if (state.visibleChannels.length > 0) {
             state.visibleChannels.pop();
         }
+    },
+    setChannels: (state, action: PayloadAction<Channel[]>) => {
+        state.visibleChannels = action.payload;
     },
     addMessage: (state) => {
         state.visibleMessages.push(new Message(0, 0, state.visibleMessages.length + 1, 'This is a message'));
@@ -60,6 +63,11 @@ export const UserModel = createSlice({
     },
     setCurrentChannelById: (state, action: PayloadAction<number>) => {
         state.currentChannelId = action.payload;
+    },
+    setCurrentChannelToLast: (state) => {
+        if(state.visibleChannels.length > 0) {
+            state.currentChannelId = state.visibleChannels[state.visibleChannels.length - 1].channelId;
+        }
     }
   },
 })
@@ -67,7 +75,7 @@ export const UserModel = createSlice({
 // Action creators are generated for each case reducer function
 export const { 
     setGuilds, addGuild, removeGuild, setCurrentGuildById,
-    addChannel, removeChannel, setCurrentChannelById,
+    setChannels, addChannel, removeChannel, setCurrentChannelById, setCurrentChannelToLast,
     addMessage, removeMessage
 } = UserModel.actions
 

@@ -26,9 +26,10 @@ interface ServerDB {
     server_name: string;
 }
 
+//TODO: use thunks for this, they are cleaner 
 async function updateUserModel() {
     const userModel = await requestUserModel();
-     userModel.servers = userModel.servers.map((server: ServerDB) => {
+    userModel.servers = userModel.servers.map((server: ServerDB) => {
         return Guild(server.server_id, server.server_name);
     });
     store.dispatch(setGuilds(userModel.servers));
@@ -38,4 +39,4 @@ async function updateUserModel() {
 }
 
 
-export { updateUserModel };
+export { requestUserModel, updateUserModel };

@@ -1,10 +1,10 @@
 
-import { updateUserModel } from '../core/server-interface/UserModelAPI';
+import { updateUserModel } from '../core/server-api/UserModelAPI';
 import type { AppDispatch, RootState } from '../core/stores/store';
 import { setCurrentGuildById } from '../core/stores/UserModel';
 import { SpaceCreationState } from '../core/stores/RivuletState';
 import { useSelector } from 'react-redux';
-import { createChannel } from '../core/server-interface/ChannelAPI';
+import { createChannel, reloadChannels } from '../core/server-api/ChannelAPI';
 
 async function handleSpaceCreation(spaceState: SpaceCreationState, spaceParams: any, dispatch: AppDispatch) {
     switch(spaceState) {
@@ -40,6 +40,7 @@ async function handleServerCreation(serverParams: any, dispatch: AppDispatch) {
         await updateUserModel(); //TODO: we already have this information in data
         // Set the current guild to the newly created guild
         dispatch(setCurrentGuildById(data.created_server_id));
+        reloadChannels();
     } else {
         console.error('Server creation failed:', response.statusText);
         // handle server creation failure
@@ -55,6 +56,7 @@ async function handleChannelCreation(channelParams: any, dispatch: AppDispatch) 
         return;
     }
     await createChannel(guildId, channelName);
+    reloadChannels();
 }
 
 export { handleSpaceCreation };

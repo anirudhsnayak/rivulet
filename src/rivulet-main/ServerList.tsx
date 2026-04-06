@@ -6,6 +6,7 @@ import { styled } from '@mui/material/styles';
 import currentTheme from '../theme/theme';
 import { setCreatingSpace } from '../core/stores/RivuletState';
 import { SpaceCreationState } from '../core/stores/RivuletState';
+import { reloadChannels } from '../core/server-api/ChannelAPI';
 
 function noIconRenderText(channelName: string): string {
     if(channelName == undefined || channelName.length == 0) return '?';
@@ -43,7 +44,11 @@ export function ServerList() {
             <ServerIcon 
                 key={index}
                 selected={selectedGuild === guild.guildId}
-                onClick={() => dispatch(setCurrentGuildById(guild.guildId))}
+                onClick={() => {
+                        dispatch(setCurrentGuildById(guild.guildId))
+                        reloadChannels();
+                    }
+                }
             >
                 {noIconRenderText(guild.guildName)}
             </ServerIcon>

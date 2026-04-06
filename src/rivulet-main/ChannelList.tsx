@@ -1,9 +1,10 @@
-import { addChannel, removeChannel, setCurrentChannelById } from '../core/stores/UserModel';
+import { addChannel, removeChannel, setCurrentChannelToLast } from '../core/stores/UserModel';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../core/stores/store';
 import Box from '@mui/material/Box';
 import { setCreatingSpace, SpaceCreationState } from '../core/stores/RivuletState';
 import { styled } from '@mui/material/styles'; 
+import { reloadChannels } from '../core/server-api/ChannelAPI';
 
 const ChannelRow = styled(Box)<{ selected?: boolean }>(({ selected }) => ({
     width: 'auto',
@@ -23,15 +24,14 @@ const ChannelRow = styled(Box)<{ selected?: boolean }>(({ selected }) => ({
 
 export function ChannelList() {
     const channels = useSelector((state: RootState) => state.UserModel.visibleChannels);
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     const selectedChannel = useSelector((state: RootState) => state.UserModel.currentChannelId);
     return (
         <div>
             <button
                 onClick={() => { 
                     dispatch(setCreatingSpace(SpaceCreationState.CreatingChannel));
-                    dispatch(addChannel());
-                    dispatch(setCurrentChannelById(channels[channels.length - 1].channelId));
+                    dispatch(setCurrentChannelToLast());
                 }}
                 >
                 Add Channel
@@ -47,21 +47,6 @@ export function ChannelList() {
                     selected={selectedChannel === channels[index].channelId}>
                         # {channels[index].channelName}
                 </ChannelRow>
-                // <Box
-                //     key={index}
-                //     sx={{
-                //         width: 'auto',
-                //         margin: '0.5rem 0.5rem',
-                //         backgroundColor: 'primary.main',
-                //         display: 'flex',
-                //         alignItems: 'top',
-                //         justifyContent: 'center',
-                //         color: 'text.primary',
-                //         textAlign: 'center',
-                //     }}
-                // >
-                //     {channels[index].channelName}
-                // </Box>
             ))}
         </div>
 
