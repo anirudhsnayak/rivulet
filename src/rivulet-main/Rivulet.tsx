@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import { ServerList } from './ServerList';
 import { ChannelList } from './ChannelList';
-import { MessageList } from './MessageList';
+import { MessageList } from '../core/message-ui/MessageList';
 import { useEffect } from 'react';
 import { updateUserModel } from '../core/server-api/UserModelAPI';
 import { SpaceCreationModal } from '../space-creation/SpaceCreationModal';

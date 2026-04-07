@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { Guild } from './Guild';
 import { Channel } from './Channel';
-import Message from './Message';
+import { Message } from './Message';
 import { current } from '@reduxjs/toolkit';
 
 export interface UserState {
@@ -51,7 +51,7 @@ export const UserModel = createSlice({
         state.visibleChannels = action.payload;
     },
     addMessage: (state) => {
-        state.visibleMessages.push(new Message(0, 0, state.visibleMessages.length + 1, 'This is a message'));
+        state.visibleMessages.push(Message(0, 0, state.visibleMessages.length + 1, 'This is a message'));
     },
     removeMessage: (state) => {
         if (state.visibleMessages.length > 0) {

@@ -1,13 +1,23 @@
-import { addMessage, removeMessage } from '../core/stores/UserModel';
+import { addMessage, removeMessage } from '../stores/UserModel';
 import { useSelector, useDispatch } from 'react-redux';
-import type { RootState } from '../core/stores/store';
+import type { RootState } from '../stores/store';
 import Box from '@mui/material/Box';
+import { MessageField } from './MessageField';
+
+
+const messageListStyle = {
+    height: '100%',
+    width: '100%',
+    display: 'flex', 
+    flexDirection: 'column' as 'column',
+    justifyContent: 'flex-end' as 'flex-end',
+};
 
 export function MessageList() {
     const messages = useSelector((state: RootState) => state.UserModel.visibleMessages);
     const dispatch = useDispatch()
     return (
-        <div>
+        <div style={messageListStyle}>
             <button
                 onClick={() => dispatch(addMessage())}
                 >
@@ -34,6 +44,7 @@ export function MessageList() {
                     {messages[index].messageText}
                 </Box>
             ))}
+            <MessageField/>
         </div>
 
     );

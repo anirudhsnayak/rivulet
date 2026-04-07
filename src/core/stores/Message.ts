@@ -1,13 +1,16 @@
 
-export default class Guild {
+export interface Message {
     guildId: number;
     channelId: number;
     messageId: number;
     messageText: string;
-    constructor(guildId: number, channelId: number, messageId: number, messageText: string) {
-        this.guildId = guildId;
-        this.channelId = channelId;
-        this.messageId = messageId;
-        this.messageText = messageText;
+}
+
+export function Message(guildId: number, channelId: number, messageId: number, messageText: string): Message {
+    return {
+        guildId,
+        channelId,
+        messageId,
+        messageText
     }
 }
