@@ -2,8 +2,8 @@ import { StrictMode } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-router-dom";
 import { ThemeProvider } from '@mui/material/styles';
 import currentTheme from './theme/theme';
-import { Login } from './login/Login';
-import { Rivulet } from './rivulet-main/Rivulet';
+import { Login } from './pages/login/Login';
+import { Rivulet } from './pages/rivulet-main/Rivulet';
 
 export default function App(){
     return (

@@ -1,10 +1,10 @@
 import Box from '@mui/material/Box';
-import { ServerList } from './ServerList';
-import { ChannelList } from './ChannelList';
-import { MessageList } from './message-ui/MessageList';
+import { ServerList } from './servers/ServerList';
+import { ChannelList } from './channels/ChannelList';
+import { MessageList } from './messages/MessageList';
 import { useEffect } from 'react';
-import { updateUserModel } from '../api/UserModelAPI';
-import { SpaceCreationModal } from '../space-creation/SpaceCreationModal';
+import { updateUserModel } from '../../api/UserAPI';
+import { SpaceCreationModal } from '../../space-creation/SpaceCreationModal';
 
 function Rivulet() {
     useEffect(()=>{

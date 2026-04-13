@@ -1,10 +1,9 @@
-import { addMessage, removeMessage } from '../../stores/states/UserState';
+import { addMessage, removeMessage } from '../../../stores/slices/UserSlice';
 import { useSelector, useDispatch } from 'react-redux';
-import type { RootState } from '../../stores/store';
+import type { RootState } from '../../../stores/store';
 import Box from '@mui/material/Box';
 import { MessageField } from './MessageField';
-import { reloadMessages } from '../../api/MessageAPI';
-
+import { reloadMessages } from '../../../api/MessageAPI';
 
 const messageListStyle = {
     height: '100%',

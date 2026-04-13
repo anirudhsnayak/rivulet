@@ -1,6 +1,6 @@
-import { RivuletTextField } from "../../components/RivuletTextField";
-import { createMessage, reloadMessages } from "../../api/MessageAPI";
-import { store } from "../../stores/store";
+import { RivuletTextField } from "../../../components/RivuletTextField";
+import { createMessage, reloadMessages } from "../../../api/MessageAPI";
+import { store } from "../../../stores/store";
 
 async function handleMessageSend(message: string) {
     let currentGuildId = store.getState().UserModel.currentGuildId;

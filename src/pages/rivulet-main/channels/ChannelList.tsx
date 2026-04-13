@@ -1,8 +1,9 @@
-import { removeChannel } from '../stores/states/UserState';
+import { removeChannel } from '../../../stores/slices/UserSlice';
 import { useSelector, useDispatch } from 'react-redux';
-import type { RootState } from '../stores/store';
+import type { RootState } from '../../../stores/store';
+import { setCreatingSpace } from '../../../stores/slices/RivuletSlice';
+import { SpaceCreationState } from '../../../models/global/SpaceCreationState';
 import Box from '@mui/material/Box';
-import { setCreatingSpace, SpaceCreationState } from '../stores/states/RivuletState';
 import { styled } from '@mui/material/styles'; 
 
 const ChannelRow = styled(Box)<{ selected?: boolean }>(({ selected }) => ({

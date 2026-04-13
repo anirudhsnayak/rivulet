@@ -1,9 +1,8 @@
 
-import { updateUserModel } from '../api/UserModelAPI';
-import type { AppDispatch, RootState } from '../stores/store';
-import { setCurrentChannelById, setCurrentChannelToLast, setCurrentGuildById } from '../stores/states/UserState';
-import { SpaceCreationState } from '../stores/states/RivuletState';
-import { useSelector } from 'react-redux';
+import { updateUserModel } from '../api/UserAPI';
+import type { AppDispatch } from '../stores/store';
+import { setCurrentChannelToLast, setCurrentGuildById } from '../stores/slices/UserSlice';
+import { SpaceCreationState } from '../models/global/SpaceCreationState';
 import { createChannel, reloadChannels } from '../api/ChannelAPI';
 
 async function handleSpaceCreation(spaceState: SpaceCreationState, spaceParams: any, dispatch: AppDispatch) {

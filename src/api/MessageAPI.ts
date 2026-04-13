@@ -1,7 +1,7 @@
 import { Message } from "../models/message-hierarchy/Message";
 import { store } from "../stores/store";
-import { setMessages } from "../stores/states/UserState";
-import { type MessageDB } from "../db/MessageDB";
+import { setMessages } from "../stores/slices/UserSlice";
+import { type MessageDB } from "../models/db/MessageDB";
 
 export async function createMessage(serverId: number, channelId: number, messageText: string) {
     const response = await fetch('http://localhost:3000/api/message/', {

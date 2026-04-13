@@ -1,8 +1,8 @@
 import { Guild } from "../models/message-hierarchy/Guild";
-import { setCurrentGuildById, setGuilds } from "../stores/states/UserState";
+import { setGuilds } from "../stores/slices/UserSlice";
 import { store } from "../stores/store";
 import { requestChannels } from "./ChannelAPI";
-import { type ServerDB } from "../db/ServerDB";
+import { type ServerDB } from "../models/db/ServerDB";
 
 async function requestUserModel() {
     const response = await fetch('http://localhost:3000/api/user', {

@@ -4,11 +4,11 @@ import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import type { RootState } from '../stores/store';
 import { useSelector, useDispatch } from 'react-redux';
-import { setCreatingSpace, SpaceCreationState } from '../stores/states/RivuletState';
+import { SpaceCreationState } from '../models/global/SpaceCreationState';
+import { setCreatingSpace } from '../stores/slices/RivuletSlice';
 import { RivuletTextField } from '../components/RivuletTextField';
-import { handleSpaceCreation } from './SpaceCreationHandler';
+import { handleSpaceCreation } from '../controllers/SpaceCreationController';
 import { useState } from 'react';
-import { setCurrentChannelToLast } from '../stores/states/UserState';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -60,6 +60,7 @@ export function SpaceCreationModal() {
                 value={spaceName}
                 onChange={(e: any) => setSpaceName(e.target.value)}
             />
+
             {/* Box that contains the Create Server button, center contents and self*/}
             <Box sx={{ 
                 marginTop: '1rem', 

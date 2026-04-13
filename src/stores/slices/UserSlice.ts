@@ -1,16 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
-import { Guild } from '../../models/message-hierarchy/Guild';
-import { Channel } from '../../models/message-hierarchy/Channel';
-import { Message } from '../../models/message-hierarchy/Message';
-
-export interface UserState {
-  guilds: Guild[];
-  currentGuildId: number;
-  currentChannelId: number;
-  visibleChannels: Channel[];
-  visibleMessages: Message[]
-}
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
+import { Guild, Channel, Message } from '../../models/message-hierarchy';
+import type { UserState } from '../../models/global';
 
 const initialState: UserState = {
   guilds: [],
@@ -20,8 +10,8 @@ const initialState: UserState = {
   visibleMessages: []
 }
 
-export const UserModel = createSlice({
-  name: 'UserModel',
+export const UserSlice = createSlice({
+  name: 'UserSlice',
   initialState,
   reducers: {
     setGuilds: (state, action: PayloadAction<Guild[]>) => {
@@ -79,6 +69,6 @@ export const {
     setGuilds, addGuild, removeGuild, setCurrentGuildById,
     setChannels, addChannel, removeChannel, setCurrentChannelById, setCurrentChannelToLast,
     setMessages, addMessage, removeMessage
-} = UserModel.actions
+} = UserSlice.actions
 
-export default UserModel.reducer
+export default UserSlice.reducer

@@ -1,7 +1,7 @@
 import { Channel } from "../models/message-hierarchy/Channel";
 import { store } from "../stores/store";
-import { setChannels } from "../stores/states/UserState";
-import { type ChannelDB } from "../db/ChannelDB";
+import { setChannels } from "../stores/slices/UserSlice";
+import { type ChannelDB } from "../models/db/ChannelDB";
 
 export async function createChannel(serverId: number, channelName: string) {
     const response = await fetch('http://localhost:3000/api/channel/', {
