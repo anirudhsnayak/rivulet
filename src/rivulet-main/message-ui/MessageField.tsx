@@ -1,11 +1,12 @@
 import { RivuletTextField } from "../../components/RivuletTextField";
-import { createMessage } from "../server-api/MessageAPI";
-import { store } from "../stores/store";
+import { createMessage, reloadMessages } from "../../api/MessageAPI";
+import { store } from "../../stores/store";
 
-function handleMessageSend(message: string) {
+async function handleMessageSend(message: string) {
     let currentGuildId = store.getState().UserModel.currentGuildId;
     let currentChannelId = store.getState().UserModel.currentChannelId;
-    createMessage(currentGuildId, currentChannelId, message);
+    await createMessage(currentGuildId, currentChannelId, message);
+    await reloadMessages(); //TODO: this is inefficient
 }
 
 //we're using MUI here

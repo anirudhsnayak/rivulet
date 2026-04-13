@@ -4,7 +4,6 @@ export interface Guild {
     guildName: string;
 }
 
-//to make redux happy, we need to make a factory function that creates a new channel object instead of using the constructor directly. 
 export function Guild(guildId: number, guildName: string): Guild {
     return {
         guildId,

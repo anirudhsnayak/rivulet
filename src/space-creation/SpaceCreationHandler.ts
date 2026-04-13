@@ -1,10 +1,10 @@
 
-import { updateUserModel } from '../core/server-api/UserModelAPI';
-import type { AppDispatch, RootState } from '../core/stores/store';
-import { setCurrentGuildById } from '../core/stores/UserModel';
-import { SpaceCreationState } from '../core/stores/RivuletState';
+import { updateUserModel } from '../api/UserModelAPI';
+import type { AppDispatch, RootState } from '../stores/store';
+import { setCurrentChannelById, setCurrentChannelToLast, setCurrentGuildById } from '../stores/states/UserState';
+import { SpaceCreationState } from '../stores/states/RivuletState';
 import { useSelector } from 'react-redux';
-import { createChannel, reloadChannels } from '../core/server-api/ChannelAPI';
+import { createChannel, reloadChannels } from '../api/ChannelAPI';
 
 async function handleSpaceCreation(spaceState: SpaceCreationState, spaceParams: any, dispatch: AppDispatch) {
     switch(spaceState) {
@@ -56,7 +56,8 @@ async function handleChannelCreation(channelParams: any, dispatch: AppDispatch) 
         return;
     }
     await createChannel(guildId, channelName);
-    reloadChannels();
+    await reloadChannels();
+    dispatch(setCurrentChannelToLast());
 }
 
 export { handleSpaceCreation };

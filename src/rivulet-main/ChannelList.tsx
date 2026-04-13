@@ -1,10 +1,9 @@
-import { addChannel, removeChannel, setCurrentChannelToLast } from '../core/stores/UserModel';
+import { removeChannel } from '../stores/states/UserState';
 import { useSelector, useDispatch } from 'react-redux';
-import type { RootState } from '../core/stores/store';
+import type { RootState } from '../stores/store';
 import Box from '@mui/material/Box';
-import { setCreatingSpace, SpaceCreationState } from '../core/stores/RivuletState';
+import { setCreatingSpace, SpaceCreationState } from '../stores/states/RivuletState';
 import { styled } from '@mui/material/styles'; 
-import { reloadChannels } from '../core/server-api/ChannelAPI';
 
 const ChannelRow = styled(Box)<{ selected?: boolean }>(({ selected }) => ({
     width: 'auto',
@@ -31,7 +30,6 @@ export function ChannelList() {
             <button
                 onClick={() => { 
                     dispatch(setCreatingSpace(SpaceCreationState.CreatingChannel));
-                    dispatch(setCurrentChannelToLast());
                 }}
                 >
                 Add Channel
@@ -44,7 +42,11 @@ export function ChannelList() {
             {Array.from({ length: channels.length }, (_, index) => (
                 <ChannelRow
                     key={index}
-                    selected={selectedChannel === channels[index].channelId}>
+                    selected={selectedChannel === channels[index].channelId}
+                    onClick={() => {
+                        dispatch(setCreatingSpace(SpaceCreationState.NotCreatingSpace));
+                    }}
+                >
                         # {channels[index].channelName}
                 </ChannelRow>
             ))}

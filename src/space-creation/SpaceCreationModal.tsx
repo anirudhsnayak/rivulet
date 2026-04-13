@@ -2,12 +2,13 @@ import Box from '@mui/material/Box';
 import { RivuletButton } from '../components/RivuletButton';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
-import type { RootState } from '../core/stores/store';
+import type { RootState } from '../stores/store';
 import { useSelector, useDispatch } from 'react-redux';
-import { setCreatingSpace, SpaceCreationState } from '../core/stores/RivuletState';
+import { setCreatingSpace, SpaceCreationState } from '../stores/states/RivuletState';
 import { RivuletTextField } from '../components/RivuletTextField';
 import { handleSpaceCreation } from './SpaceCreationHandler';
 import { useState } from 'react';
+import { setCurrentChannelToLast } from '../stores/states/UserState';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -44,7 +45,9 @@ export function SpaceCreationModal() {
     return (
     <>
         <Modal open={creatingSpace != SpaceCreationState.NotCreatingSpace} 
-               onClose={() => dispatch(setCreatingSpace(SpaceCreationState.NotCreatingSpace))}>
+               onClose={() => {
+                    dispatch(setCreatingSpace(SpaceCreationState.NotCreatingSpace));
+               }}>
         <Box sx={style}>
             <Typography sx={{ color: 'text.primary' }} variant="h6" component="h2">
             Create a New {spaceType}

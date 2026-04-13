@@ -1,12 +1,12 @@
 import Box from '@mui/material/Box';
 import { useSelector, useDispatch } from 'react-redux';
-import type { RootState } from '../core/stores/store';
-import { setCurrentGuildById } from '../core/stores/UserModel';
+import type { RootState } from '../stores/store';
+import { setCurrentGuildById } from '../stores/states/UserState';
 import { styled } from '@mui/material/styles';
 import currentTheme from '../theme/theme';
-import { setCreatingSpace } from '../core/stores/RivuletState';
-import { SpaceCreationState } from '../core/stores/RivuletState';
-import { reloadChannels } from '../core/server-api/ChannelAPI';
+import { setCreatingSpace } from '../stores/states/RivuletState';
+import { SpaceCreationState } from '../stores/states/RivuletState';
+import { reloadChannels } from '../api/ChannelAPI';
 
 function noIconRenderText(channelName: string): string {
     if(channelName == undefined || channelName.length == 0) return '?';

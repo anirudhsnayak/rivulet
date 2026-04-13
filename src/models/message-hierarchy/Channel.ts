@@ -5,7 +5,6 @@ export interface Channel {
     channelName: string;
 }
 
-//to make redux happy, we need to make a factory function that creates a new channel object instead of using the constructor directly. 
 export function Channel(parentGuildId: number, channelId: number, channelName: string): Channel {
     return {
         parentGuildId: parentGuildId,

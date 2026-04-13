@@ -1,7 +1,8 @@
-import { Guild } from "../stores/Guild";
-import { setCurrentGuildById, setGuilds } from "../stores/UserModel";
+import { Guild } from "../models/message-hierarchy/Guild";
+import { setCurrentGuildById, setGuilds } from "../stores/states/UserState";
 import { store } from "../stores/store";
 import { requestChannels } from "./ChannelAPI";
+import { type ServerDB } from "../db/ServerDB";
 
 async function requestUserModel() {
     const response = await fetch('http://localhost:3000/api/user', {
@@ -19,11 +20,6 @@ async function requestUserModel() {
     } else {
         console.error('Failed to load user model:', response.statusText);
     }
-}
-
-interface ServerDB {
-    server_id: number;
-    server_name: string;
 }
 
 //TODO: use thunks for this, they are cleaner 

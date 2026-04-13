@@ -1,8 +1,9 @@
-import { addMessage, removeMessage } from '../stores/UserModel';
+import { addMessage, removeMessage } from '../../stores/states/UserState';
 import { useSelector, useDispatch } from 'react-redux';
-import type { RootState } from '../stores/store';
+import type { RootState } from '../../stores/store';
 import Box from '@mui/material/Box';
 import { MessageField } from './MessageField';
+import { reloadMessages } from '../../api/MessageAPI';
 
 
 const messageListStyle = {
@@ -19,7 +20,10 @@ export function MessageList() {
     return (
         <div style={messageListStyle}>
             <button
-                onClick={() => dispatch(addMessage())}
+                onClick={() => {
+                    dispatch(addMessage());
+                    reloadMessages();
+                }}
                 >
                 Add Message
                 </button>
@@ -38,7 +42,7 @@ export function MessageList() {
                         display: 'flex',
                         alignItems: 'top',
                         justifyContent: 'center',
-                        color: 'text.primary',
+                        color: 'black',
                     }}
                 >
                     {messages[index].messageText}
