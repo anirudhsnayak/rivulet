@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { SpaceCreationState } from '../models/global/SpaceCreationState';
 import { setCreatingSpace } from '../stores/slices/RivuletSlice';
 import { RivuletTextField } from '../components/RivuletTextField';
-import { handleSpaceCreation } from '../controllers/SpaceCreationController';
+import { handleSpaceCreation } from '../controllers/rivulet-main/SpaceCreationController';
 import { useState } from 'react';
 
 const style = {

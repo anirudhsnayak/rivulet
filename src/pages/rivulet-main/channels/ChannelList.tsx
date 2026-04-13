@@ -1,10 +1,9 @@
 import { removeChannel } from '../../../stores/slices/UserSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../../stores/store';
-import { setCreatingSpace } from '../../../stores/slices/RivuletSlice';
-import { SpaceCreationState } from '../../../models/global/SpaceCreationState';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles'; 
+import { openChannelCreationModal, selectChannel } from '../../../controllers/rivulet-main/ChannelController';
 
 const ChannelRow = styled(Box)<{ selected?: boolean }>(({ selected }) => ({
     width: 'auto',
@@ -23,16 +22,12 @@ const ChannelRow = styled(Box)<{ selected?: boolean }>(({ selected }) => ({
 }));
 
 export function ChannelList() {
-    const channels = useSelector((state: RootState) => state.UserModel.visibleChannels);
     const dispatch = useDispatch();
+    const channels = useSelector((state: RootState) => state.UserModel.visibleChannels);
     const selectedChannel = useSelector((state: RootState) => state.UserModel.currentChannelId);
     return (
         <div>
-            <button
-                onClick={() => { 
-                    dispatch(setCreatingSpace(SpaceCreationState.CreatingChannel));
-                }}
-                >
+            <button onClick={openChannelCreationModal}>
                 Add Channel
                 </button>
                 <button
@@ -44,9 +39,7 @@ export function ChannelList() {
                 <ChannelRow
                     key={index}
                     selected={selectedChannel === channels[index].channelId}
-                    onClick={() => {
-                        dispatch(setCreatingSpace(SpaceCreationState.NotCreatingSpace));
-                    }}
+                    onClick={() => selectChannel(channels[index].channelId)} 
                 >
                         # {channels[index].channelName}
                 </ChannelRow>

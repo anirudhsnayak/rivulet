@@ -1,7 +1,10 @@
 import { RivuletTextField } from "../../../components/RivuletTextField";
 import { createMessage, reloadMessages } from "../../../api/MessageAPI";
 import { store } from "../../../stores/store";
+import { useState } from "react";
 
+
+//TODO: lift up state here for cleaner code
 async function handleMessageSend(message: string) {
     let currentGuildId = store.getState().UserModel.currentGuildId;
     let currentChannelId = store.getState().UserModel.currentChannelId;
@@ -9,15 +12,22 @@ async function handleMessageSend(message: string) {
     await reloadMessages(); //TODO: this is inefficient
 }
 
-//we're using MUI here
 export function MessageField() {
+    const [message, setMessage] = useState("");
+
+    async function keyPressHandler(e: any) {
+        if (e.key !== 'Enter') return;
+        await handleMessageSend(e.target.value);
+        setMessage("");
+    }
+
     return (
         <div>
-            <RivuletTextField label="Type a message..." onKeyPress={(e: any) => {
-                if (e.key === 'Enter') {
-                    handleMessageSend(e.target.value);
-                }
-            }} />
+            <RivuletTextField 
+                value={message}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)}
+                label="Type a message..." 
+                onKeyPress={keyPressHandler} />
         </div>
     )
 }

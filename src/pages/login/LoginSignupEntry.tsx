@@ -6,7 +6,7 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import TabContext from '@mui/lab/TabContext';
 import React, { useState } from 'react';
-import { handleLoginSignup } from '../../controllers/LoginController';
+import { handleLoginSignup } from '../../controllers/login/LoginController';
 import { RivuletTextField } from '../../components/RivuletTextField';
 import { RivuletButton } from '../../components/RivuletButton';
 

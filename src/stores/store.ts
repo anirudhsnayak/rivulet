@@ -7,7 +7,7 @@ export const store = configureStore({
     UserModel: userModelReducer,
     RivuletState: rivuletStateReducer,
   },
-})
+});
 
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch

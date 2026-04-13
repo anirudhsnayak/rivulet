@@ -36,12 +36,12 @@ export function MessageList() {
                     key={index}
                     sx={{
                         width: 'auto',
-                        margin: '0.5rem 0.5rem',
+                        margin: '0.1rem 0.0rem',
                         backgroundColor: 'primary.main',
                         display: 'flex',
                         alignItems: 'top',
                         justifyContent: 'center',
-                        color: 'black',
+                        color: 'white',
                     }}
                 >
                     {messages[index].messageText}

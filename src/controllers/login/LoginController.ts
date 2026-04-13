@@ -1,4 +1,4 @@
-import { handleLogin, handleSignup } from "../api/LoginAPI";
+import { handleLogin, handleSignup } from "../../api/LoginAPI";
 
 export async function handleLoginSignup(name: string, username: string, password: string) {
     const hash = await computeHash(username, password);

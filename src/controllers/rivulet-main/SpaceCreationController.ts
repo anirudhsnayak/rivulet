@@ -1,9 +1,9 @@
 
-import { updateUserModel } from '../api/UserAPI';
-import type { AppDispatch } from '../stores/store';
-import { setCurrentChannelToLast, setCurrentGuildById } from '../stores/slices/UserSlice';
-import { SpaceCreationState } from '../models/global/SpaceCreationState';
-import { createChannel, reloadChannels } from '../api/ChannelAPI';
+import { updateUserModel } from '../../api/UserAPI';
+import type { AppDispatch } from '../../stores/store';
+import { setCurrentChannelToLast, setCurrentGuildById } from '../../stores/slices/UserSlice';
+import { SpaceCreationState } from '../../models/global/SpaceCreationState';
+import { createChannel, reloadChannels } from '../../api/ChannelAPI';
 
 async function handleSpaceCreation(spaceState: SpaceCreationState, spaceParams: any, dispatch: AppDispatch) {
     switch(spaceState) {
