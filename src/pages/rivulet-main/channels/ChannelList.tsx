@@ -27,14 +27,6 @@ export function ChannelList() {
     const selectedChannel = useSelector((state: RootState) => state.UserModel.currentChannelId);
     return (
         <div>
-            <button onClick={openChannelCreationModal}>
-                Add Channel
-                </button>
-                <button
-                onClick={() => dispatch(removeChannel())}
-                >
-                Remove Channel
-                </button>
             {Array.from({ length: channels.length }, (_, index) => (
                 <ChannelRow
                     key={index}
@@ -44,6 +36,14 @@ export function ChannelList() {
                         # {channels[index].channelName}
                 </ChannelRow>
             ))}
+            <button onClick={openChannelCreationModal}>
+            Add Channel
+            </button>
+            <button
+            onClick={() => dispatch(removeChannel())}
+            >
+            Remove Channel
+            </button>
         </div>
 
     );

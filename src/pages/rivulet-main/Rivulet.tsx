@@ -3,8 +3,9 @@ import { ServerList } from './servers/ServerList';
 import { ChannelList } from './channels/ChannelList';
 import { MessageList } from './messages/MessageList';
 import { useEffect } from 'react';
-import { updateUserModel } from '../../api/UserAPI';
+import { updateUserModel } from '../../api/UserModelAPI';
 import { SpaceCreationModal } from '../../space-creation/SpaceCreationModal';
+import { MemberList } from './members/MemberList';
 
 function Rivulet() {
     useEffect(()=>{
@@ -33,6 +34,7 @@ function Rivulet() {
             >
             <ServerList />
             </Box>
+
             {/* Channel List */}
             <Box
                 sx={{
@@ -46,6 +48,7 @@ function Rivulet() {
             >
             <ChannelList />
            </Box>   
+
             {/* Message List */}
            <Box
                 sx={{
@@ -58,6 +61,8 @@ function Rivulet() {
                 }}>
                 <MessageList/>
            </Box>
+
+            {/* Member List */}
            <Box
                 sx={{
                     width: '15rem',
@@ -67,7 +72,7 @@ function Rivulet() {
                     justifyContent: 'center',
                     alignItems: 'center',
                 }}>
-            
+                <MemberList/>
            </Box>
         </Box>
     );

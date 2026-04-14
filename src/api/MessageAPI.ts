@@ -1,4 +1,4 @@
-import { Message } from "../models/message-hierarchy/Message";
+import { Message } from "../models/server-hierarchy/Message";
 import { store } from "../stores/store";
 import { setMessages } from "../stores/slices/UserSlice";
 import { type MessageDB } from "../models/db/MessageDB";

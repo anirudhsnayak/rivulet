@@ -1,4 +1,4 @@
-import { Channel } from "../models/message-hierarchy/Channel";
+import { Channel } from "../models/server-hierarchy";
 import { store } from "../stores/store";
 import { setChannels } from "../stores/slices/UserSlice";
 import { type ChannelDB } from "../models/db/ChannelDB";
@@ -50,5 +50,4 @@ export async function reloadChannels() {
         return Channel(channel.server_id, channel.channel_id, channel.name);
     });
     store.dispatch(setChannels(updatedChannels));
-    
 }

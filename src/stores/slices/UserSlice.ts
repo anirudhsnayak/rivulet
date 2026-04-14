@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
-import { Guild, Channel, Message } from '../../models/message-hierarchy';
+import { Guild, Channel, Message, ServerMember } from '../../models/server-hierarchy';
 import type { UserState } from '../../models/global';
 
 const initialState: UserState = {
@@ -7,7 +7,8 @@ const initialState: UserState = {
   currentGuildId: -1,
   currentChannelId: -1,
   visibleChannels: [],
-  visibleMessages: []
+  visibleMessages: [],
+  visibleMembers: [],
 }
 
 export const UserSlice = createSlice({
@@ -50,6 +51,9 @@ export const UserSlice = createSlice({
             state.visibleMessages.pop();
         }
     },
+    setMembers(state, action: PayloadAction<ServerMember[]>) {
+        state.visibleMembers = action.payload;
+    },
     setCurrentGuildById: (state, action: PayloadAction<number>) => {
         state.currentGuildId = action.payload;
     },
@@ -68,7 +72,8 @@ export const UserSlice = createSlice({
 export const { 
     setGuilds, addGuild, removeGuild, setCurrentGuildById,
     setChannels, addChannel, removeChannel, setCurrentChannelById, setCurrentChannelToLast,
-    setMessages, addMessage, removeMessage
+    setMessages, addMessage, removeMessage,
+    setMembers,
 } = UserSlice.actions
 
 export default UserSlice.reducer

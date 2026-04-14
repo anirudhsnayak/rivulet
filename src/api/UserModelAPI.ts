@@ -1,7 +1,8 @@
-import { Guild } from "../models/message-hierarchy/Guild";
+import { Guild } from "../models/server-hierarchy/Guild";
 import { setGuilds } from "../stores/slices/UserSlice";
 import { store } from "../stores/store";
 import { requestChannels } from "./ChannelAPI";
+import { getMembersInServer } from "./MemberAPI";
 import { type ServerDB } from "../models/db/ServerDB";
 
 async function requestUserModel() {
@@ -29,9 +30,6 @@ async function updateUserModel() {
         return Guild(server.server_id, server.server_name);
     });
     store.dispatch(setGuilds(userModel.servers));
-    let currentGuildId = store.getState().UserModel.currentGuildId;
-    const currentChannels = await requestChannels(currentGuildId);
-    console.log('Current channels loaded:', currentChannels);
 }
 
 

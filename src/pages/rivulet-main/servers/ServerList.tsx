@@ -7,6 +7,7 @@ import currentTheme from '../../../theme/theme';
 import { setCreatingSpace } from '../../../stores/slices/RivuletSlice';
 import { SpaceCreationState } from '../../../models/global/SpaceCreationState';
 import { reloadChannels } from '../../../api/ChannelAPI';
+import { reloadMembers } from '../../../api/MemberAPI';
 
 function noIconRenderText(channelName: string): string {
     if(channelName == undefined || channelName.length == 0) return '?';
@@ -47,6 +48,7 @@ export function ServerList() {
                 onClick={() => {
                         dispatch(setCurrentGuildById(guild.guildId))
                         reloadChannels();
+                        reloadMembers();
                     }
                 }
             >

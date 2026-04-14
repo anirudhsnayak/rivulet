@@ -1,11 +1,10 @@
-import { Guild } from '../message-hierarchy/Guild';
-import { Channel } from '../message-hierarchy/Channel';
-import { Message } from '../message-hierarchy/Message';
+import { Guild, Channel, Message, ServerMember } from '../server-hierarchy';
 
 export interface UserState {
   guilds: Guild[];
   currentGuildId: number;
   currentChannelId: number;
   visibleChannels: Channel[];
-  visibleMessages: Message[]
+  visibleMessages: Message[];
+  visibleMembers: ServerMember[];
 }
