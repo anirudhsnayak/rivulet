@@ -6,10 +6,12 @@ import { useEffect } from 'react';
 import { updateUserModel } from '../../api/UserModelAPI';
 import { SpaceCreationModal } from '../../space-creation/SpaceCreationModal';
 import { MemberList } from './members/MemberList';
+import { processPendingInvites } from '../../controllers/rivulet-main/UserController';
 
 function Rivulet() {
     useEffect(()=>{
         updateUserModel();
+        processPendingInvites();
     });
     return (
         <Box

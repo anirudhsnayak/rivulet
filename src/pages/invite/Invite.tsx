@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../stores/store";
 
+//TODO: add an are you sure on this page
 export function Invite() {
     const { inviteId } = useParams();
     const navigate = useNavigate();
@@ -11,7 +12,7 @@ export function Invite() {
 
     useEffect(() => {
         if (inviteId) {
-            localStorage.setItem('pendingInvite', inviteId);
+            sessionStorage.setItem('pendingInvite', inviteId);
         }
         if (isLoggedIn) {
             navigate('/app');

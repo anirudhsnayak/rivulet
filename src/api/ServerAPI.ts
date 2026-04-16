@@ -27,3 +27,25 @@ export async function createServer(serverParams: any) {
         // handle server creation failure
     }
 }
+
+export async function getInviteCode(serverId: number) {
+    const response = await fetch(`http://localhost:3000/api/server/invite`, {
+        method: 'POST',
+        credentials: "include",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            serverId: serverId,
+        })
+    });
+
+    if (response.ok) {
+        const data = await response.json();
+        console.log('Invite code retrieval successful:', data);
+        return data.invite_code;
+    } else {
+        console.error('Invite code retrieval failed:', response.statusText);
+        // handle invite code retrieval failure
+    }  
+}

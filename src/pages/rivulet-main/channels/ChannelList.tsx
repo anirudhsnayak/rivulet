@@ -4,6 +4,7 @@ import type { RootState } from '../../../stores/store';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles'; 
 import { openChannelCreationModal, selectChannel } from '../../../controllers/rivulet-main/ChannelController';
+import { displayInviteCode } from '../../../controllers/rivulet-main/ServerController';
 
 const ChannelRow = styled(Box)<{ selected?: boolean }>(({ selected }) => ({
     width: 'auto',
@@ -75,7 +76,7 @@ export function ChannelList() {
                 Remove Channel
                 </button>
             </div>
-            <button style={InviteButtonStyle} onClick={() => alert("Invite functionality coming soon!")}>
+            <button style={InviteButtonStyle} onClick={displayInviteCode}>
                 Invite People
             </button>
         </div>
