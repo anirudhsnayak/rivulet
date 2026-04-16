@@ -10,7 +10,7 @@ export function openChannelCreationModal(){
 }
 
 export function selectChannel(channelId: number) {
-    const currentChannelId = store.getState().UserModel.currentChannelId;
+    const currentChannelId = store.getState().UserSlice.currentChannelId;
     if(currentChannelId === channelId) return; // Channel is already selected, do nothing
     store.dispatch(setCurrentChannelById(channelId));
     reloadMessages();

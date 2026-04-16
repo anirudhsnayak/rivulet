@@ -21,28 +21,62 @@ const ChannelRow = styled(Box)<{ selected?: boolean }>(({ selected }) => ({
     },
 }));
 
+const InviteButtonStyle = {
+    width: '100%',
+    marginTop: 'auto',
+    marginBottom: '0.5rem',
+    backgroundColor: 'primary.main',    
+    color: 'text.primary',
+    '&:hover': {
+        cursor: 'pointer',
+        backgroundColor: 'primary.dark',
+    },
+}
+
+const ChannelListContainerStyle = {
+    display: 'flex',
+    flexDirection: 'column' as 'column',
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',      // Center horizontally
+    justifyContent: 'center', 
+}
+
+const ChannelListStyle = {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column' as 'column',
+    justifyContent: 'center', // Align to top
+    flexGrow: 1,
+}
+
 export function ChannelList() {
     const dispatch = useDispatch();
-    const channels = useSelector((state: RootState) => state.UserModel.visibleChannels);
-    const selectedChannel = useSelector((state: RootState) => state.UserModel.currentChannelId);
+    const channels = useSelector((state: RootState) => state.UserSlice.visibleChannels);
+    const selectedChannel = useSelector((state: RootState) => state.UserSlice.currentChannelId);
     return (
-        <div>
-            {Array.from({ length: channels.length }, (_, index) => (
-                <ChannelRow
-                    key={index}
-                    selected={selectedChannel === channels[index].channelId}
-                    onClick={() => selectChannel(channels[index].channelId)} 
+        <div style={ChannelListContainerStyle}>
+            <div style={ChannelListStyle}>
+                {Array.from({ length: channels.length }, (_, index) => (
+                    <ChannelRow
+                        key={index}
+                        selected={selectedChannel === channels[index].channelId}
+                        onClick={() => selectChannel(channels[index].channelId)} 
+                    >
+                            # {channels[index].channelName}
+                    </ChannelRow>
+                ))}
+                <button onClick={openChannelCreationModal}>
+                Add Channel
+                </button>
+                <button
+                onClick={() => dispatch(removeChannel())}
                 >
-                        # {channels[index].channelName}
-                </ChannelRow>
-            ))}
-            <button onClick={openChannelCreationModal}>
-            Add Channel
-            </button>
-            <button
-            onClick={() => dispatch(removeChannel())}
-            >
-            Remove Channel
+                Remove Channel
+                </button>
+            </div>
+            <button style={InviteButtonStyle} onClick={() => alert("Invite functionality coming soon!")}>
+                Invite People
             </button>
         </div>
 

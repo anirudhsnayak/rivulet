@@ -6,8 +6,8 @@ import { useState } from "react";
 
 //TODO: lift up state here for cleaner code
 async function handleMessageSend(message: string) {
-    let currentGuildId = store.getState().UserModel.currentGuildId;
-    let currentChannelId = store.getState().UserModel.currentChannelId;
+    let currentGuildId = store.getState().UserSlice.currentGuildId;
+    let currentChannelId = store.getState().UserSlice.currentChannelId;
     await createMessage(currentGuildId, currentChannelId, message);
     await reloadMessages(); //TODO: this is inefficient
 }

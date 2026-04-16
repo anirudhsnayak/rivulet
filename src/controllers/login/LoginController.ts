@@ -1,12 +1,17 @@
 import { handleLogin, handleSignup } from "../../api/LoginAPI";
+import { store } from "../../stores/store";
+import { setLoggedIn } from "../../stores/slices/RivuletSlice";
 
-export async function handleLoginSignup(name: string, username: string, password: string) {
+export async function handleLoginSignup(name: string, username: string, password: string): Promise<boolean> {
     const hash = await computeHash(username, password);
+    let successfulLogin = false;
     if (name === 'login') {
-        await handleLogin(username, hash);
+        successfulLogin = await handleLogin(username, hash);
     } else if (name === 'signup') {
-        await handleSignup(username, hash);
+        successfulLogin = await handleSignup(username, hash);
     }
+    if(successfulLogin) store.dispatch(setLoggedIn(true));
+    return successfulLogin;
 }
 
 async function computeHash(username: string, password: string) : Promise<string> {

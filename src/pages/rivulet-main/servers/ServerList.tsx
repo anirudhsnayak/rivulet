@@ -34,10 +34,10 @@ const ServerIcon = styled(Box)<{ selected?: boolean }>(({ selected }) => ({
 
 
 export function ServerList() {
-    const guilds = useSelector((state: RootState) => state.UserModel.guilds);
+    const guilds = useSelector((state: RootState) => state.UserSlice.guilds);
     const dispatch = useDispatch();
 
-    const selectedGuild = useSelector((state: RootState) => state.UserModel.currentGuildId);
+    const selectedGuild = useSelector((state: RootState) => state.UserSlice.currentGuildId);
 
     return (
         <div>

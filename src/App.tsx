@@ -4,6 +4,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import currentTheme from './theme/theme';
 import { Login } from './pages/login/Login';
 import { Rivulet } from './pages/rivulet-main/Rivulet';
+import { Invite } from './pages/invite/Invite';
 
 export default function App(){
     return (
@@ -19,6 +20,7 @@ export default function App(){
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/app" element={<Rivulet/>} />
+        <Route path="/invite/:inviteId" element={<Invite />} />
     </Routes>
     </Router>
     </StrictMode>

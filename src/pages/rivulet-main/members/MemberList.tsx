@@ -20,11 +20,11 @@ const MemberEntry = styled(Box)<{ selected?: boolean }>(({ selected }) => ({
 }));
 
 export function MemberList() {
-    const members = useSelector((state: RootState) => state.UserModel.visibleMembers);
+    const members = useSelector((state: RootState) => state.UserSlice.visibleMembers);
     return (
         <div>
             {Array.from({ length: members.length }, (_, index) => (
-                <MemberEntry>
+                <MemberEntry key={index}>
                     {members[index].memberName}
                 </MemberEntry>
             ))}

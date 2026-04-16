@@ -44,7 +44,7 @@ export async function requestChannels(serverId: number) {
 
 
 export async function reloadChannels() {
-    const currentGuildId = store.getState().UserModel.currentGuildId;
+    const currentGuildId = store.getState().UserSlice.currentGuildId;
     const channels = await requestChannels(currentGuildId);
     const updatedChannels = channels.map((channel: ChannelDB) => {
         return Channel(channel.server_id, channel.channel_id, channel.name);

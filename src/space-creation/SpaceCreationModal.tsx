@@ -41,7 +41,7 @@ export function SpaceCreationModal() {
         }
     };
     const spaceType = (creatingSpace === SpaceCreationState.CreatingServer ? "Server" : "Channel");
-    const guildId = useSelector((state: RootState) => state.UserModel.currentGuildId);
+    const guildId = useSelector((state: RootState) => state.UserSlice.currentGuildId);
     return (
     <>
         <Modal open={creatingSpace != SpaceCreationState.NotCreatingSpace} 

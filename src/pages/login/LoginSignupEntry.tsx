@@ -6,6 +6,7 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import TabContext from '@mui/lab/TabContext';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { handleLoginSignup } from '../../controllers/login/LoginController';
 import { RivuletTextField } from '../../components/RivuletTextField';
 import { RivuletButton } from '../../components/RivuletButton';
@@ -13,6 +14,15 @@ import { RivuletButton } from '../../components/RivuletButton';
 function LoginSignupPortal(props: any) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
+    
+    async function handleLoginClick() {
+        const success = await handleLoginSignup(props.value, username, password);
+        if (success) {
+            navigate('/app');
+        }
+    }
+    
     return (
         <Stack spacing={2}>
             <div style={{
@@ -21,7 +31,7 @@ function LoginSignupPortal(props: any) {
             }}> {props.name} </div>
             <RivuletTextField label="Username" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}/>
             <RivuletTextField label="Password" type="password" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}/>
-            <RivuletButton name={props.name} onClick={() => handleLoginSignup(props.value, username, password)}/>
+            <RivuletButton name={props.name} onClick={handleLoginClick}/>
         </Stack>
     )
 }

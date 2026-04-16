@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
-import userModelReducer from './slices/UserSlice';
+import userSliceReducer from './slices/UserSlice';
 import rivuletStateReducer from './slices/RivuletSlice';
 
 export const store = configureStore({
   reducer: {
-    UserModel: userModelReducer,
+    UserSlice: userSliceReducer,
     RivuletState: rivuletStateReducer,
   },
 });

@@ -43,8 +43,8 @@ export async function requestMessages(serverId: number, channelId: number) {
     }
 }
 export async function reloadMessages(): Promise<void> {
-    const currentGuildId = store.getState().UserModel.currentGuildId;
-    const currentChannelId = store.getState().UserModel.currentChannelId;
+    const currentGuildId = store.getState().UserSlice.currentGuildId;
+    const currentChannelId = store.getState().UserSlice.currentChannelId;
     const messages = await requestMessages(currentGuildId, currentChannelId);
     const updatedMessages = messages.map((message: MessageDB) => {
         return Message(message.channel_id, message.user_id, message.message_id, message.message_text);

@@ -32,5 +32,9 @@ async function updateUserModel() {
     store.dispatch(setGuilds(userModel.servers));
 }
 
+async function processPendingInvites() {
+    const pendingInvite = localStorage.getItem('pendingInvite');
+    if (!pendingInvite) return;
+}
 
 export { requestUserModel, updateUserModel };

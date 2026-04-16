@@ -13,9 +13,11 @@ export async function handleLogin(username: string, hash: string) {
     if (response.ok) {
         const data = await response.json();
         console.log('Login successful:', data);
+        return true;
     } else {
         console.error('Login failed:', response.statusText);
     }
+    return false;
 }
 
 export async function handleSignup(username: string, hash: string) {
@@ -33,7 +35,9 @@ export async function handleSignup(username: string, hash: string) {
     if (response.ok) {
         const data = await response.json();
         console.log('Signup successful:', data);
+        return true;
     } else {
         console.error('Signup failed:', response.statusText);
     }
+    return false;
 }

@@ -9,7 +9,7 @@ import { MemberList } from './members/MemberList';
 
 function Rivulet() {
     useEffect(()=>{
-        updateUserModel()
+        updateUserModel();
     });
     return (
         <Box

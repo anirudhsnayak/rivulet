@@ -12,7 +12,7 @@ const messageListStyle = {
 };
 
 export function MessageList() {
-    const messages = useSelector((state: RootState) => state.UserModel.visibleMessages);
+    const messages = useSelector((state: RootState) => state.UserSlice.visibleMessages);
     return (
         <div style={messageListStyle}>
             {Array.from({ length: messages.length }, (_, index) => (
