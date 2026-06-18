@@ -4,6 +4,8 @@ import { store } from "../stores/store";
 import { type ServerDB } from "../models/db/ServerDB";
 import { API_MODE } from "./ApiConfig";
 import { inMemoryDB } from "./InMemoryDB";
+import { reloadChannels } from "./ChannelAPI";
+import { reloadMembers } from "./MemberAPI";
 
 async function requestUserModel() {
     if (API_MODE === "in-memory") {
@@ -65,6 +67,13 @@ async function updateUserModel() {
         return Guild(server.server_id, server.server_name);
     });
     store.dispatch(setGuilds(userModel.servers));
+
+    // If setGuilds auto-selected the first guild, load its channels and members
+    const currentGuildId = store.getState().UserSlice.currentGuildId;
+    if (currentGuildId !== -1) {
+        reloadChannels();
+        reloadMembers();
+    }
 }
 
 export { requestUserModel, updateUserModel };

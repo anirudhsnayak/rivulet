@@ -6,16 +6,16 @@ import { styled } from '@mui/material/styles';
 import { openChannelCreationModal, selectChannel } from '../../../controllers/rivulet-main/ChannelController';
 import { displayInviteCode } from '../../../controllers/rivulet-main/ServerController';
 
-const ChannelRow = styled(Box)<{ selected?: boolean }>(({ selected }) => ({
+const ChannelRow = styled(Box)<{ selected?: boolean }>(({ selected, theme }) => ({
     width: 'auto',
-    margin: '0.5rem 0.5rem',
-    backgroundColor: 'primary.main',
-    border: "1px solid",
-    borderColor: selected ? 'red' : 'primary.light',
+    margin: '0.25rem 0.5rem',
+    padding: '0.25rem 0.75rem',
+    borderRadius: selected ? '6px' : '0px',
+    backgroundColor: selected ? theme.palette.primary.lighter : 'transparent',
     display: 'flex',
     alignItems: 'top',
     justifyContent: 'center',
-    color: 'text.primary',
+    color: selected ? 'text.primary' : theme.palette.text.disabled,
     textAlign: 'center',
     '&:hover': {
         cursor: 'pointer',

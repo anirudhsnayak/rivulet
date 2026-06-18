@@ -22,12 +22,12 @@ export function MessageField() {
     }
 
     return (
-        <div>
+        <>
             <RivuletTextField 
                 value={message}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)}
                 label="Type a message..." 
                 onKeyPress={keyPressHandler} />
-        </div>
+        </>
     )
 }

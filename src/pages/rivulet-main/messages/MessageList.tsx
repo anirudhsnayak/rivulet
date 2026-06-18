@@ -28,9 +28,8 @@ const MessageRow = styled(Box)(({ theme }) => ({
 }));
 
 const MessageInputArea = styled(Box)(() => ({
-    px: '1rem',
-    pt: '0.5rem',
-    pb: '1rem',
+    display: 'flex',
+    width: '100%',
 }));
 
 export function MessageList() {
