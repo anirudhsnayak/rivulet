@@ -58,6 +58,7 @@ function Rivulet() {
                     height: '100%',
                     backgroundColor: 'background.main',
                     display: 'flex',
+                    flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
                 }}>

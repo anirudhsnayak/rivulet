@@ -65,7 +65,7 @@ export async function reloadMessages(): Promise<void> {
     const messages = await requestMessages(currentGuildId, currentChannelId);
     if (!messages) return;
     const updatedMessages = messages.map((message: MessageDB) => {
-        return Message(message.channel_id, message.user_id, message.message_id, message.message_text);
+        return Message(message.guild_id, message.channel_id, message.message_id, message.message_text, message.author_name);
     });
     store.dispatch(setMessages(updatedMessages));
     console.log("Messages reloaded:", updatedMessages);

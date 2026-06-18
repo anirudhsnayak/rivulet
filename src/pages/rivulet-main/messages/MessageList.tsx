@@ -1,38 +1,91 @@
+import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../stores/store';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import { styled } from '@mui/material/styles';
 import { MessageField } from './MessageField';
 
-const messageListStyle = {
-    height: '100%',
-    width: '100%',
-    display: 'flex', 
-    flexDirection: 'column' as 'column',
-    justifyContent: 'flex-end' as 'flex-end',
-};
+const MessagesContainer = styled(Box)(() => ({
+    flexGrow: 1,
+    overflowY: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.125rem',
+    justifyContent: 'flex-end',
+    py: '0.5rem',
+    px: '1rem',
+}));
+
+const MessageRow = styled(Box)(({ theme }) => ({
+    padding: '0.35rem 0.75rem',
+    borderRadius: '6px',
+    lineHeight: 1.5,
+    transition: 'background-color 0.1s ease',
+    '&:hover': {
+        backgroundColor: theme.palette.action.hover,
+    },
+}));
+
+const MessageInputArea = styled(Box)(() => ({
+    px: '1rem',
+    pt: '0.5rem',
+    pb: '1rem',
+}));
 
 export function MessageList() {
-    const messages = useSelector((state: RootState) => state.UserSlice.visibleMessages);
-    return (
-        <div style={messageListStyle}>
-            {Array.from({ length: messages.length }, (_, index) => (
-                <Box
-                    key={index}
-                    sx={{
-                        width: 'auto',
-                        margin: '0.1rem 0.0rem',
-                        backgroundColor: 'primary.main',
-                        display: 'flex',
-                        alignItems: 'top',
-                        justifyContent: 'center',
-                        color: 'white',
-                    }}
-                >
-                    {messages[index].messageText}
-                </Box>
-            ))}
-            <MessageField/>
-        </div>
+    const messages = useSelector(
+        (state: RootState) => state.UserSlice.visibleMessages,
+    );
+    const bottomRef = useRef<HTMLDivElement>(null);
 
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages.length]);
+
+    return (
+        <>
+            <MessagesContainer>
+                {messages.length === 0 && (
+                    <Box
+                        sx={{
+                            flexGrow: 1,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <Typography color="text.secondary" variant="body2">
+                            No messages yet. Say hello!
+                        </Typography>
+                    </Box>
+                )}
+                {messages.map((msg, index) => (
+                    <MessageRow key={index}>
+                        <Typography
+                            component="span"
+                            variant="body2"
+                            fontWeight={600}
+                            color="secondary"
+                            sx={{ mr: 0.5 }}
+                        >
+                            {msg.senderName}:
+                        </Typography>
+                        <Typography
+                            component="span"
+                            variant="body2"
+                            color="text.primary"
+                            sx={{ wordBreak: 'break-word' }}
+                        >
+                            {msg.messageText}
+                        </Typography>
+                    </MessageRow>
+                ))}
+                <div ref={bottomRef} />
+            </MessagesContainer>
+            <MessageInputArea>
+                <MessageField />
+            </MessageInputArea>
+        </>
     );
 }

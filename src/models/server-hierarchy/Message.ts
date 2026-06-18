@@ -4,13 +4,15 @@ export interface Message {
     channelId: number;
     messageId: number;
     messageText: string;
+    senderName: string;
 }
 
-export function Message(guildId: number, channelId: number, messageId: number, messageText: string): Message {
+export function Message(guildId: number, channelId: number, messageId: number, messageText: string, senderName: string): Message {
     return {
         guildId,
         channelId,
         messageId,
-        messageText
+        messageText,
+        senderName,
     }
 }

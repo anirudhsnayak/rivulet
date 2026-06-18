@@ -276,6 +276,8 @@ class InMemoryDB {
   ): Promise<MessageDB> {
     await this._delay();
     const userId = this._requireAuth();
+    const user = this.users.get(userId);
+    const authorName = user ? user.username : `user-${userId}`;
     const messageId = this.nextMessageId++;
     const msg: StoredMessage = {
       message_id: messageId,
@@ -291,6 +293,7 @@ class InMemoryDB {
       user_id: msg.user_id,
       message_id: msg.message_id,
       message_text: msg.message_text,
+      author_name: authorName,
     };
   }
 
@@ -303,12 +306,15 @@ class InMemoryDB {
     const messages: MessageDB[] = [];
     for (const m of this.messages.values()) {
       if (m.guild_id === serverId && m.channel_id === channelId) {
+        const user = this.users.get(m.user_id);
+        const authorName = user ? user.username : `user-${m.user_id}`;
         messages.push({
           guild_id: m.guild_id,
           channel_id: m.channel_id,
           user_id: m.user_id,
           message_id: m.message_id,
           message_text: m.message_text,
+          author_name: authorName,
         });
       }
     }

@@ -1,8 +1,6 @@
 import { Guild } from "../models/server-hierarchy/Guild";
 import { setGuilds } from "../stores/slices/UserSlice";
 import { store } from "../stores/store";
-import { requestChannels } from "./ChannelAPI";
-import { getMembersInServer } from "./MemberAPI";
 import { type ServerDB } from "../models/db/ServerDB";
 import { API_MODE } from "./ApiConfig";
 import { inMemoryDB } from "./InMemoryDB";
