@@ -2,50 +2,63 @@ import { Channel } from "../models/server-hierarchy";
 import { store } from "../stores/store";
 import { setChannels } from "../stores/slices/UserSlice";
 import { type ChannelDB } from "../models/db/ChannelDB";
+import { API_MODE } from "./ApiConfig";
+import { inMemoryDB } from "./InMemoryDB";
 
 export async function createChannel(serverId: number, channelName: string) {
-    const response = await fetch('http://localhost:3000/api/channel/', {
-        method: 'POST',
+    if (API_MODE === "in-memory") {
+        const data = await inMemoryDB.createChannel(serverId, channelName);
+        console.log("Channel creation successful (in-memory):", data);
+        return data;
+    }
+
+    const response = await fetch("http://localhost:3000/api/channel/", {
+        method: "POST",
         credentials: "include",
         headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
         },
         body: JSON.stringify({
             channelName: channelName,
-            serverId: serverId
-        })
+            serverId: serverId,
+        }),
     });
     if (response.ok) {
         const data = await response.json();
-        console.log('Channel creation successful:', data);
+        console.log("Channel creation successful:", data);
         return data;
     } else {
-        console.error('Channel creation failed:', response.statusText);
+        console.error("Channel creation failed:", response.statusText);
     }
 }
 
 export async function requestChannels(serverId: number) {
+    if (API_MODE === "in-memory") {
+        const data = await inMemoryDB.getChannels(serverId);
+        console.log("Channels loaded (in-memory):", data);
+        return data.channels;
+    }
+
     const response = await fetch(`http://localhost:3000/api/channel?serverId=${serverId}`, {
-        method: 'GET',
+        method: "GET",
         credentials: "include",
         headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
         },
     });
     if (response.ok) {
         const data = await response.json();
-
-        console.log('Channels loaded:', data);
+        console.log("Channels loaded:", data);
         return data.channels;
     } else {
-        console.error('Failed to load channels:', response.statusText);
+        console.error("Failed to load channels:", response.statusText);
     }
 }
-
 
 export async function reloadChannels() {
     const currentGuildId = store.getState().UserSlice.currentGuildId;
     const channels = await requestChannels(currentGuildId);
+    if (!channels) return;
     const updatedChannels = channels.map((channel: ChannelDB) => {
         return Channel(channel.server_id, channel.channel_id, channel.name);
     });
