@@ -6,8 +6,8 @@ import { MessageList } from './messages/MessageList';
 import { useEffect } from 'react';
 import { updateUserModel } from '../../api/UserModelAPI';
 import { SpaceCreationModal } from './space-creation/SpaceCreationModal';
+import { InviteReceivedModal } from './space-creation/InviteReceivedModal';
 import { MemberList } from './members/MemberList';
-import { processPendingInvites } from '../../controllers/rivulet-main/UserController';
 import { store } from '../../stores/store';
 import { switchToServer } from '../../controllers/rivulet-main/ServerController';
 
@@ -19,7 +19,6 @@ function Rivulet() {
                 switchToServer(guildId);
             }
         });
-        processPendingInvites();
     }, []);
     return (
         <Box
@@ -33,6 +32,7 @@ function Rivulet() {
             }} 
         > 
             <SpaceCreationModal/>
+            <InviteReceivedModal/>
             {/* Server List */}
             <Box
                 sx={{
