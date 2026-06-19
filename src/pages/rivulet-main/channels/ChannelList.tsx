@@ -14,7 +14,7 @@ const ChannelRow = styled(Box)<{ selected?: boolean }>(({ selected, theme }) => 
     borderRadius: selected ? '6px' : '0px',
     backgroundColor: selected ? theme.palette.primary.lighter : 'transparent',
     display: 'flex',
-    alignItems: 'top',
+    alignItems: 'center',
     justifyContent: 'center',
     color: selected ? 'text.primary' : theme.palette.text.disabled,
     textAlign: 'center',
@@ -28,16 +28,52 @@ const ChannelListContainerStyle = {
     flexDirection: 'column' as 'column',
     width: '100%',
     height: '100%',
-    alignItems: 'center',      // Center horizontally
-    justifyContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
 }
+
+const ChannelListHeader = styled(Box)(({ theme }) => ({
+    width: '100%',
+    boxSizing: 'border-box',
+    padding: '0.5rem 0.75rem',
+    display: 'flex',
+    flexDirection: 'row' as 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    color: theme.palette.text.disabled,
+    fontSize: '0.75rem',
+    fontWeight: 600,
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
+    flexShrink: 0,
+}));
+
+const AddButton = styled('button')(({ theme }) => ({
+    background: 'none',
+    border: 'none',
+    color: theme.palette.text.disabled,
+    fontSize: '1rem',
+    lineHeight: 1,
+    padding: 0,
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    '&:hover': {
+        color: theme.palette.text.primary,
+    },
+    '&:focus': {
+        outline: 'none',
+    },
+}));
 
 const ChannelListStyle = {
     width: '100%',
     display: 'flex',
     flexDirection: 'column' as 'column',
-    justifyContent: 'center', // Align to top
+    justifyContent: 'flex-start',
     flexGrow: 1,
+    overflowY: 'auto' as 'auto',
 }
 
 export function ChannelList() {
@@ -62,6 +98,10 @@ export function ChannelList() {
 
     return (
         <div style={ChannelListContainerStyle}>
+            <ChannelListHeader>
+                <span># Channels</span>
+                <AddButton onClick={openChannelCreationModal}>+</AddButton>
+            </ChannelListHeader>
             <div style={ChannelListStyle} onContextMenu={handleContextMenu}>
                 {Array.from({ length: channels.length }, (_, index) => (
                     <ChannelRow
