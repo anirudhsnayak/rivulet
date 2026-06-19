@@ -49,15 +49,17 @@ export function MessageList() {
     return (
         <>
             <MessagesContainer>
-                <MessageRow>
-                    <Typography
-                        variant="body1"
-                        color="text.primary"
-                        sx={{ fontSize: '1.5rem' }}
-                    >
-                        Welcome to #{channelName}!
-                    </Typography>
-                </MessageRow>
+                {channelName && (
+                    <MessageRow>
+                        <Typography
+                            variant="body1"
+                            color="text.primary"
+                            sx={{ fontSize: '1.5rem' }}
+                        >
+                            Welcome to #{channelName}!
+                        </Typography>
+                    </MessageRow>
+                )}
                 {messages.map((msg, index) => (
                     <MessageRow key={index}>
                         <Typography
