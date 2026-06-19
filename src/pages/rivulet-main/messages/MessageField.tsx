@@ -27,7 +27,8 @@ export function MessageField() {
                 value={message}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)}
                 label="Type a message..." 
-                onKeyPress={keyPressHandler} />
+                onKeyPress={keyPressHandler}
+                sx={{ marginTop: '8px' }} />
         </>
     )
 }

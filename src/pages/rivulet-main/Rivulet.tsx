@@ -32,6 +32,7 @@ function Rivulet() {
                     height: '100%',
                     backgroundColor: 'background.main',
                     borderRight: '2px solid grey.500',
+                    flexShrink: 0,
                 }}
             >
             <ServerList />
@@ -41,11 +42,12 @@ function Rivulet() {
             <Box
                 sx={{
                     height: '100%',
-                    width: '20rem',
+                    width: '10rem',
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
                     backgroundColor: 'primary.main',
+                    flexShrink: 0,
                 }}
             >
             <ChannelList />
@@ -68,12 +70,13 @@ function Rivulet() {
             {/* Member List */}
            <Box
                 sx={{
-                    width: '15rem',
+                    width: '10rem',
                     height: '100%',
                     backgroundColor: 'primary.main',
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    flexShrink: 0,
                 }}>
                 <MemberList/>
            </Box>

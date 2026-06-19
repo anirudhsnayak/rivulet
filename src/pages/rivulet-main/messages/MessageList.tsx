@@ -18,7 +18,7 @@ const MessagesContainer = styled(Box)(() => ({
 }));
 
 const MessageRow = styled(Box)(({ theme }) => ({
-    padding: '0.35rem 0.75rem',
+    padding: '0.15rem 0.75rem',
     borderRadius: '6px',
     lineHeight: 1.5,
     transition: 'background-color 0.1s ease',
