@@ -32,6 +32,9 @@ export async function getMembersInServer(serverId: number): Promise<ServerMember
 export async function reloadMembers() {
     const currentGuildId = store.getState().UserSlice.currentGuildId;
     const members = await getMembersInServer(currentGuildId);
+    // Guard: if guild changed during fetch, don't overwrite new guild's members
+    const latestGuildId = store.getState().UserSlice.currentGuildId;
+    if (latestGuildId !== currentGuildId) return;
     const updatedMembers = members.map((member: ServerMemberDB) => {
         return ServerMember(member.user_id, member.username, member.server_id);
     });

@@ -58,6 +58,9 @@ export async function requestChannels(serverId: number) {
 export async function reloadChannels() {
     const currentGuildId = store.getState().UserSlice.currentGuildId;
     const channels = await requestChannels(currentGuildId);
+    // Guard: if guild changed during fetch, don't overwrite new guild's channels
+    const latestGuildId = store.getState().UserSlice.currentGuildId;
+    if (latestGuildId !== currentGuildId) return;
     if (!channels) return;
     const updatedChannels = channels.map((channel: ChannelDB) => {
         return Channel(channel.server_id, channel.channel_id, channel.name);

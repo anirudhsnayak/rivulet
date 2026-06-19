@@ -71,8 +71,8 @@ async function updateUserModel() {
     // If setGuilds auto-selected the first guild, load its channels and members
     const currentGuildId = store.getState().UserSlice.currentGuildId;
     if (currentGuildId !== -1) {
-        reloadChannels();
-        reloadMembers();
+        await reloadChannels();
+        await reloadMembers();
     }
 }
 
