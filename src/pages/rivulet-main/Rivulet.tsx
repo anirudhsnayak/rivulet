@@ -5,7 +5,7 @@ import { ServerInfo } from './server-info/ServerInfo';
 import { MessageList } from './messages/MessageList';
 import { useEffect } from 'react';
 import { updateUserModel } from '../../api/UserModelAPI';
-import { SpaceCreationModal } from '../../space-creation/SpaceCreationModal';
+import { SpaceCreationModal } from './space-creation/SpaceCreationModal';
 import { MemberList } from './members/MemberList';
 import { processPendingInvites } from '../../controllers/rivulet-main/UserController';
 import { store } from '../../stores/store';

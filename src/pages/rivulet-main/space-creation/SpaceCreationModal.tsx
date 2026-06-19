@@ -1,13 +1,13 @@
 import Box from '@mui/material/Box';
-import { RivuletButton } from '../components/RivuletButton';
+import { RivuletButton } from '../../../components/RivuletButton';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
-import type { RootState } from '../stores/store';
+import type { RootState } from '../../../stores/store';
 import { useSelector, useDispatch } from 'react-redux';
-import { SpaceCreationState } from '../models/global/SpaceCreationState';
-import { setCreatingSpace } from '../stores/slices/RivuletSlice';
-import { RivuletTextField } from '../components/RivuletTextField';
-import { handleSpaceCreation } from '../controllers/rivulet-main/SpaceCreationController';
+import { SpaceCreationState } from '../../../models/global/SpaceCreationState';
+import { setCreatingSpace } from '../../../stores/slices/RivuletSlice';
+import { RivuletTextField } from '../../../components/RivuletTextField';
+import { handleSpaceCreation } from '../../../controllers/rivulet-main/SpaceCreationController';
 import { useState } from 'react';
 
 const style = {
