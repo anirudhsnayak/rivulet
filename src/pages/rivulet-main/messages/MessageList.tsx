@@ -36,6 +36,10 @@ export function MessageList() {
     const messages = useSelector(
         (state: RootState) => state.UserSlice.visibleMessages,
     );
+    const channelName = useSelector((state: RootState) => {
+        const id = state.UserSlice.currentChannelId;
+        return state.UserSlice.visibleChannels.find(c => c.channelId === id)?.channelName ?? '';
+    });
     const bottomRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -45,20 +49,15 @@ export function MessageList() {
     return (
         <>
             <MessagesContainer>
-                {messages.length === 0 && (
-                    <Box
-                        sx={{
-                            flexGrow: 1,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}
+                <MessageRow>
+                    <Typography
+                        variant="body1"
+                        color="text.primary"
+                        sx={{ fontSize: '1.5rem' }}
                     >
-                        <Typography color="text.secondary" variant="body2">
-                            No messages yet. Say hello!
-                        </Typography>
-                    </Box>
-                )}
+                        Welcome to #{channelName}!
+                    </Typography>
+                </MessageRow>
                 {messages.map((msg, index) => (
                     <MessageRow key={index}>
                         <Typography

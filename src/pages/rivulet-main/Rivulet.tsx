@@ -8,10 +8,17 @@ import { updateUserModel } from '../../api/UserModelAPI';
 import { SpaceCreationModal } from '../../space-creation/SpaceCreationModal';
 import { MemberList } from './members/MemberList';
 import { processPendingInvites } from '../../controllers/rivulet-main/UserController';
+import { store } from '../../stores/store';
+import { switchToServer } from '../../controllers/rivulet-main/ServerController';
 
 function Rivulet() {
-    useEffect(()=>{
-        updateUserModel();
+    useEffect(() => {
+        updateUserModel().then(() => {
+            const guildId = store.getState().UserSlice.currentGuildId;
+            if (guildId !== -1) {
+                switchToServer(guildId);
+            }
+        });
         processPendingInvites();
     }, []);
     return (
@@ -59,13 +66,11 @@ function Rivulet() {
             {/* Message List */}
            <Box
                 sx={{
-                    flexGrow: 1, 
+                    flexGrow: 1,
                     height: '100%',
                     backgroundColor: 'background.main',
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
                 }}>
                 <MessageList/>
            </Box>

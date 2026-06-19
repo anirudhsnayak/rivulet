@@ -197,6 +197,13 @@ class InMemoryDB {
       user_id: userId,
       server_id: serverId,
     });
+    // Automatically create a #general channel in the new server
+    const channelId = this.nextChannelId++;
+    this.channels.set(channelId, {
+      channel_id: channelId,
+      server_id: serverId,
+      name: 'general',
+    });
     return { created_server_id: serverId };
   }
 
