@@ -6,7 +6,7 @@ import { reloadMessages } from '../../api/MessageAPI';
 
 
 export function openChannelCreationModal(){
-    store.dispatch(setCreatingSpace(SpaceCreationState.CreatingChannel));  
+    store.dispatch(setCreatingSpace(SpaceCreationState.CreatingChannel));
 }
 
 export function selectChannel(channelId: number) {

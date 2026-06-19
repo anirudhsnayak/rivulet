@@ -3,6 +3,7 @@ import { setCurrentChannelToLast } from '../../stores/slices/UserSlice';
 import { SpaceCreationState } from '../../models/global/SpaceCreationState';
 import { createChannel, reloadChannels } from '../../api/ChannelAPI';
 import { createServer } from '../../api/ServerAPI';
+import { reloadMessages } from '../../api/MessageAPI';
 
 async function handleSpaceCreation(spaceState: SpaceCreationState, spaceParams: any, dispatch: AppDispatch) {
     switch(spaceState) {
@@ -29,6 +30,7 @@ async function handleChannelCreation(channelParams: any, dispatch: AppDispatch) 
     await createChannel(guildId, channelName);
     await reloadChannels();
     dispatch(setCurrentChannelToLast());
+    await reloadMessages();
 }
 
 export { handleSpaceCreation };
