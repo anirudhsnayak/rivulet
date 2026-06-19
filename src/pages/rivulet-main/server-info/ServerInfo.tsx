@@ -1,9 +1,10 @@
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../stores/store';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
-import { displayInviteCode } from '../../../controllers/rivulet-main/ServerController';
+import { InviteModal } from './InviteModal';
 
 const ServerInfoContainer = styled(Box)(({ theme }) => ({
     width: '100%',
@@ -47,13 +48,15 @@ export function ServerInfo() {
     const currentGuildId = useSelector((state: RootState) => state.UserSlice.currentGuildId);
     const currentGuild = guilds.find((g) => g.guildId === currentGuildId);
     const serverName = currentGuild?.guildName ?? 'No Server';
+    const [inviteModalOpen, setInviteModalOpen] = useState(false);
 
     return (
         <ServerInfoContainer>
             <ServerName variant="body2">{serverName}</ServerName>
-            <InviteButton onClick={displayInviteCode}>
+            <InviteButton onClick={() => setInviteModalOpen(true)}>
                 Invite People
             </InviteButton>
+            <InviteModal open={inviteModalOpen} onClose={() => setInviteModalOpen(false)} />
         </ServerInfoContainer>
     );
 }

@@ -9,7 +9,6 @@ import {
 import { requestChannels } from '../../api/ChannelAPI';
 import { getMembersInServer } from '../../api/MemberAPI';
 import { requestMessages } from '../../api/MessageAPI';
-import { getInviteCode } from '../../api/ServerAPI';
 import { Channel } from '../../models/server-hierarchy/Channel';
 import { ServerMember } from '../../models/server-hierarchy/ServerMember';
 import { Message } from '../../models/server-hierarchy/Message';
@@ -47,13 +46,4 @@ export async function switchToServer(guildId: number) {
     store.dispatch(setMembers(members));
     store.dispatch(setCurrentChannelById(firstChannelId));
     store.dispatch(setMessages(messageList));
-}
-
-export async function displayInviteCode() {
-    const serverId = store.getState().UserSlice.currentGuildId;
-    if (serverId === -1) return;
-    const code = await getInviteCode(serverId);
-    if (code) {
-        await navigator.clipboard.writeText(code);
-    }
 }
