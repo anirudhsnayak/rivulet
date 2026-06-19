@@ -1,25 +1,26 @@
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../stores/store";
+import { setPendingInvite } from "../../stores/slices/RivuletSlice";
 
-//TODO: add an are you sure on this page
 export function Invite() {
     const { inviteId } = useParams();
     const navigate = useNavigate();
-    const isLoggedIn = useSelector((state: RootState) => state.RivuletState.loggedIn); // Adjust based on your state structure
+    const dispatch = useDispatch();
+    const isLoggedIn = useSelector((state: RootState) => state.RivuletState.loggedIn);
 
     useEffect(() => {
         if (inviteId) {
-            sessionStorage.setItem('pendingInvite', inviteId);
+            dispatch(setPendingInvite(inviteId));
         }
         if (isLoggedIn) {
             navigate('/app');
         } else {
             navigate('/login');
         }
-    }, [inviteId, isLoggedIn, navigate]);
+    }, [inviteId, isLoggedIn, dispatch, navigate]);
 
     return null;
 }

@@ -55,6 +55,17 @@ class InMemoryDB {
   private members: Map<string, StoredMember> = new Map();
   /** invite code → server_id */
   private invites: Map<string, number> = new Map();
+  /** server_id → invite code */
+  private serverInvites: Map<number, string> = new Map();
+
+  /** Generate a unique 8-char invite code */
+  private _generateInviteCode(): string {
+    let code: string;
+    do {
+      code = Math.random().toString(36).substring(2, 10);
+    } while (this.invites.has(code));
+    return code;
+  }
 
   // -- session -------------------------------------------------------------
   private currentUserId: number | null = null;
@@ -76,6 +87,11 @@ class InMemoryDB {
 
     // Dev user (id 1) is a member of Rivulet HQ
     this.members.set("1-1", { user_id: 1, server_id: 1 });
+
+    // Default invite for Rivulet HQ
+    const defaultInvite = this._generateInviteCode();
+    this.invites.set(defaultInvite, 1);
+    this.serverInvites.set(1, defaultInvite);
 
     // A few sample messages
     this.messages.set(1, {
@@ -197,6 +213,11 @@ class InMemoryDB {
       user_id: userId,
       server_id: serverId,
     });
+    // Generate a unique invite code for this server
+    const inviteCode = this._generateInviteCode();
+    this.invites.set(inviteCode, serverId);
+    this.serverInvites.set(serverId, inviteCode);
+
     // Automatically create a #general channel in the new server
     const channelId = this.nextChannelId++;
     this.channels.set(channelId, {
@@ -210,9 +231,13 @@ class InMemoryDB {
   async getInviteCode(serverId: number): Promise<{ invite_code: string }> {
     await this._delay();
     this._requireAuth();
-    // Generate a random-ish 8-char code
-    const code = Math.random().toString(36).substring(2, 10);
+    const existingCode = this.serverInvites.get(serverId);
+    if (existingCode) return { invite_code: existingCode };
+    // If no code exists yet (shouldn't happen for servers created normally),
+    // generate one now:
+    const code = this._generateInviteCode();
     this.invites.set(code, serverId);
+    this.serverInvites.set(serverId, code);
     return { invite_code: code };
   }
 
