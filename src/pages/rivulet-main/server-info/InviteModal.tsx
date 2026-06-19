@@ -4,11 +4,13 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import CircularProgress from '@mui/material/CircularProgress';
 import ContentCopy from '@mui/icons-material/ContentCopy';
 import Check from '@mui/icons-material/Check';
 import type { RootState } from '../../../stores/store';
 import { getInviteCode } from '../../../api/ServerAPI';
+
+const URL_PREFIX = `${window.location.origin}/invite/`;
+const CODE_PLACEHOLDER = ' '.repeat(8);
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -75,7 +77,7 @@ export function InviteModal({ open, onClose }: InviteModalProps) {
                 setError('Failed to generate invite code.');
                 return;
             }
-            setInviteUrl(`${window.location.origin}/invite/${code}`);
+            setInviteUrl(`${URL_PREFIX}${code}`);
             setLoading(false);
         }).catch((err) => {
             if (cancelled) return;
@@ -92,7 +94,6 @@ export function InviteModal({ open, onClose }: InviteModalProps) {
             await navigator.clipboard.writeText(inviteUrl);
             setCopied(true);
         } catch {
-            // Clipboard write failed — fallback: select the text manually
             const selection = window.getSelection();
             const range = document.createRange();
             const textNode = document.querySelector('[data-invite-text]');
@@ -103,6 +104,9 @@ export function InviteModal({ open, onClose }: InviteModalProps) {
             }
         }
     }, [inviteUrl]);
+
+    const showPlaceholder = loading && !error;
+    const displayText = showPlaceholder ? `${URL_PREFIX}${CODE_PLACEHOLDER}` : inviteUrl;
 
     return (
         <Modal open={open} onClose={onClose}>
@@ -115,25 +119,26 @@ export function InviteModal({ open, onClose }: InviteModalProps) {
                     Share this link to invite people to your server
                 </Typography>
 
-                {loading ? (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem', py: '0.5rem' }}>
-                        <CircularProgress size={16} sx={{ color: 'text.secondary' }} />
-                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                            Loading...
-                        </Typography>
-                    </Box>
-                ) : error ? (
+                {error ? (
                     <Typography variant="body2" sx={{ color: 'error.main', textAlign: 'center' }}>
                         {error}
                     </Typography>
                 ) : (
                     <Box sx={inviteLinkBox}>
-                        <Typography sx={inviteLinkText} data-invite-text>
-                            {inviteUrl}
+                        <Typography
+                            sx={{
+                                ...inviteLinkText,
+                                opacity: showPlaceholder ? 0.5 : 1,
+                                userSelect: showPlaceholder ? 'none' : 'auto',
+                            }}
+                            data-invite-text
+                        >
+                            {displayText}
                         </Typography>
                         <IconButton
                             onClick={handleCopy}
                             size="small"
+                            disabled={!inviteUrl}
                             sx={{ color: copied ? 'success.light' : 'text.secondary' }}
                         >
                             {copied ? <Check fontSize="small" /> : <ContentCopy fontSize="small" />}

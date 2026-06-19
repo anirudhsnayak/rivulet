@@ -4,6 +4,7 @@ import type { RootState } from '../../../stores/store';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
+import PersonAdd from '@mui/icons-material/PersonAdd';
 import { InviteModal } from './InviteModal';
 
 const ServerInfoContainer = styled(Box)(({ theme }) => ({
@@ -37,9 +38,17 @@ const InviteButton = styled('button')(({ theme }) => ({
     border: 'none',
     borderRadius: '4px',
     fontSize: '0.8rem',
+    outline: 'none',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '0.35rem',
     '&:hover': {
         cursor: 'pointer',
         backgroundColor: theme.palette.primary.dark,
+    },
+    '&:focus': {
+        outline: 'none',
     },
 }));
 
@@ -55,6 +64,7 @@ export function ServerInfo() {
             <ServerName variant="body2">{serverName}</ServerName>
             <InviteButton onClick={() => setInviteModalOpen(true)}>
                 Invite People
+                <PersonAdd sx={{ fontSize: '0.9rem' }} />
             </InviteButton>
             <InviteModal open={inviteModalOpen} onClose={() => setInviteModalOpen(false)} />
         </ServerInfoContainer>
