@@ -33,7 +33,7 @@ export async function reloadMembers() {
     const currentGuildId = store.getState().UserSlice.currentGuildId;
     const members = await getMembersInServer(currentGuildId);
     const updatedMembers = members.map((member: ServerMemberDB) => {
-        return ServerMember(member.user_id, `Member #${member.user_id}`, member.server_id);
+        return ServerMember(member.user_id, member.username, member.server_id);
     });
     store.dispatch(setMembers(updatedMembers));
 }

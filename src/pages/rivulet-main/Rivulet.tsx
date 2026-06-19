@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box';
 import { ServerList } from './servers/ServerList';
 import { ChannelList } from './channels/ChannelList';
+import { ServerInfo } from './server-info/ServerInfo';
 import { MessageList } from './messages/MessageList';
 import { useEffect } from 'react';
 import { updateUserModel } from '../../api/UserModelAPI';
@@ -38,20 +39,22 @@ function Rivulet() {
             <ServerList />
             </Box>
 
-            {/* Channel List */}
+            {/* Channel Sidebar */}
             <Box
                 sx={{
                     height: '100%',
                     width: '10rem',
                     display: 'flex',
-                    justifyContent: 'center',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-start',
                     alignItems: 'center',
                     backgroundColor: 'primary.main',
                     flexShrink: 0,
                 }}
             >
-            <ChannelList />
-           </Box>   
+                <ServerInfo />
+                <ChannelList />
+            </Box>   
 
             {/* Message List */}
            <Box

@@ -260,7 +260,9 @@ class InMemoryDB {
     const members: ServerMemberDB[] = [];
     for (const m of this.members.values()) {
       if (m.server_id === serverId) {
-        members.push({ user_id: m.user_id, server_id: m.server_id });
+        const user = this.users.get(m.user_id);
+        const username = user ? user.username : `user-${m.user_id}`;
+        members.push({ user_id: m.user_id, server_id: m.server_id, username });
       }
     }
     return { members };
