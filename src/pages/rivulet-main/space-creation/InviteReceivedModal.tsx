@@ -36,6 +36,7 @@ export function InviteReceivedModal() {
     const dispatch = useDispatch();
     const pendingInvite = useSelector((state: RootState) => state.RivuletState.pendingInvite);
 
+
     const handleAccept = useCallback(async () => {
         if (!pendingInvite) return;
         await joinServerWithInvite(pendingInvite);
@@ -44,7 +45,7 @@ export function InviteReceivedModal() {
 
     const handleDecline = useCallback(() => {
         dispatch(setPendingInvite(null));
-    }, [dispatch]);
+    }, [dispatch, pendingInvite]);
 
     return (
         <Modal open={!!pendingInvite}>

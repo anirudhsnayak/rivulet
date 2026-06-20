@@ -42,7 +42,6 @@ export async function createServer(serverParams: { spaceName: string }) {
 export async function getInviteCode(serverId: number) {
     if (API_MODE === "in-memory") {
         const data = await inMemoryDB.getInviteCode(serverId);
-        console.log("Invite code retrieval successful (in-memory):", data);
         return data.invite_code;
     }
 

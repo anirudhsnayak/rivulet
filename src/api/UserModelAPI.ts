@@ -10,7 +10,6 @@ import { reloadMembers } from "./MemberAPI";
 async function requestUserModel() {
     if (API_MODE === "in-memory") {
         const data = await inMemoryDB.getUserModel();
-        console.log("User model loaded (in-memory):", data);
         return data;
     }
 

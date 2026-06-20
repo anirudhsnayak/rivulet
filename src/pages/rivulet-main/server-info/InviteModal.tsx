@@ -81,7 +81,6 @@ export function InviteModal({ open, onClose }: InviteModalProps) {
             setLoading(false);
         }).catch((err) => {
             if (cancelled) return;
-            console.error('Failed to fetch invite code:', err);
             setError(err instanceof Error ? err.message : 'Failed to load invite link.');
             setLoading(false);
         });
