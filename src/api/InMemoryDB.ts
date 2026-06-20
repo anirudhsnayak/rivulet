@@ -37,6 +37,44 @@ interface StoredMember {
 }
 
 // ---------------------------------------------------------------------------
+// Persistence schema — shape of the JSON blob stored in localStorage
+// ---------------------------------------------------------------------------
+interface DBSnapshot {
+  nextUserId: number;
+  nextServerId: number;
+  nextChannelId: number;
+  nextMessageId: number;
+  users: Record<string, StoredUser>;
+  servers: Record<string, StoredServer>;
+  channels: Record<string, StoredChannel>;
+  messages: Record<string, StoredMessage>;
+  members: Record<string, StoredMember>;
+  invites: Record<string, number>;
+  serverInvites: Record<string, string>;
+}
+
+const STORAGE_KEY = "rivulet_db";
+
+function loadSnapshot(): DBSnapshot | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as DBSnapshot;
+  } catch (e) {
+    console.warn("Failed to load Rivulet DB from localStorage, starting fresh:", e);
+    return null;
+  }
+}
+
+function saveSnapshot(snapshot: DBSnapshot): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
+  } catch (e) {
+    console.warn("Failed to persist Rivulet DB to localStorage:", e);
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Singleton
 // ---------------------------------------------------------------------------
 class InMemoryDB {
@@ -73,10 +111,68 @@ class InMemoryDB {
   private seeded = false;
 
   // ------------------------------------------------------------------------
-  // Constructor – seed structural data immediately; the dev user is seeded
-  // lazily on first auth call so we can compute the SHA-256 hash properly.
+  // Constructor – try to restore from localStorage; seed defaults if empty.
   // ------------------------------------------------------------------------
   constructor() {
+    const saved = loadSnapshot();
+    if (saved) {
+      this._restore(saved);
+    } else {
+      this._seedDefaults();
+    }
+    this._persist();
+  }
+
+  /** Hydrate all Maps from a persisted snapshot. */
+  private _restore(snapshot: DBSnapshot): void {
+    this.nextUserId = snapshot.nextUserId;
+    this.nextServerId = snapshot.nextServerId;
+    this.nextChannelId = snapshot.nextChannelId;
+    this.nextMessageId = snapshot.nextMessageId;
+
+    this.users = new Map(
+      Object.entries(snapshot.users).map(([k, v]) => [Number(k), v]),
+    );
+    this.servers = new Map(
+      Object.entries(snapshot.servers).map(([k, v]) => [Number(k), v]),
+    );
+    this.channels = new Map(
+      Object.entries(snapshot.channels).map(([k, v]) => [Number(k), v]),
+    );
+    this.messages = new Map(
+      Object.entries(snapshot.messages).map(([k, v]) => [Number(k), v]),
+    );
+    this.members = new Map(Object.entries(snapshot.members));
+    this.invites = new Map(Object.entries(snapshot.invites));
+    this.serverInvites = new Map(
+      Object.entries(snapshot.serverInvites).map(([k, v]) => [Number(k), v]),
+    );
+  }
+
+  /** Serialize all Maps into a plain-object snapshot for localStorage. */
+  private _snapshot(): DBSnapshot {
+    return {
+      nextUserId: this.nextUserId,
+      nextServerId: this.nextServerId,
+      nextChannelId: this.nextChannelId,
+      nextMessageId: this.nextMessageId,
+      users: Object.fromEntries(this.users),
+      servers: Object.fromEntries(this.servers),
+      channels: Object.fromEntries(this.channels),
+      messages: Object.fromEntries(this.messages),
+      members: Object.fromEntries(this.members),
+      invites: Object.fromEntries(this.invites),
+      serverInvites: Object.fromEntries(this.serverInvites),
+    };
+  }
+
+  /** Write the current state to localStorage. */
+  private _persist(): void {
+    saveSnapshot(this._snapshot());
+  }
+
+  /** Data to seed when localStorage is empty (first visit). */
+  private _seedDefaults(): void {
     // Default server
     this.servers.set(1, { server_id: 1, server_name: "Rivulet HQ" });
     this.nextServerId = 2;
@@ -106,7 +202,7 @@ class InMemoryDB {
       guild_id: 1,
       channel_id: 1,
       user_id: 1,
-      message_text: "This is the in-memory dev backend — no PostgreSQL required.",
+      message_text: "Data now persists across reloads via localStorage — no PostgreSQL required.",
     });
     this.messages.set(3, {
       message_id: 3,
@@ -151,9 +247,13 @@ class InMemoryDB {
   private async _ensureSeeded(): Promise<void> {
     if (this.seeded) return;
     this.seeded = true;
-    const hash = await this._computeHash("dev", "password");
-    this.users.set(1, { id: 1, username: "dev", hash });
-    this.nextUserId = 2;
+    // Only create dev user if not already persisted from a previous session
+    if (!this.users.has(1)) {
+      const hash = await this._computeHash("dev", "password");
+      this.users.set(1, { id: 1, username: "dev", hash });
+      if (this.nextUserId < 2) this.nextUserId = 2;
+      this._persist();
+    }
   }
 
   // ------------------------------------------------------------------------
@@ -180,6 +280,7 @@ class InMemoryDB {
     }
     const id = this.nextUserId++;
     this.users.set(id, { id, username, hash });
+    this._persist();
     this.currentUserId = id;
     return true;
   }
@@ -225,6 +326,7 @@ class InMemoryDB {
       server_id: serverId,
       name: 'general',
     });
+    this._persist();
     return { created_server_id: serverId };
   }
 
@@ -238,6 +340,7 @@ class InMemoryDB {
     const code = this._generateInviteCode();
     this.invites.set(code, serverId);
     this.serverInvites.set(serverId, code);
+    this._persist();
     return { invite_code: code };
   }
 
@@ -252,6 +355,7 @@ class InMemoryDB {
       user_id: userId,
       server_id: serverId,
     });
+    this._persist();
     return true;
   }
 
@@ -268,6 +372,7 @@ class InMemoryDB {
       name: channelName,
     };
     this.channels.set(channelId, channel);
+    this._persist();
     return { channel_id: channel.channel_id, server_id: channel.server_id, name: channel.name };
   }
 
@@ -321,6 +426,7 @@ class InMemoryDB {
       message_text: messageText,
     };
     this.messages.set(messageId, msg);
+    this._persist();
     return {
       guild_id: msg.guild_id,
       channel_id: msg.channel_id,
