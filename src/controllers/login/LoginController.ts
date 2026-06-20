@@ -1,6 +1,8 @@
 import { handleLogin, handleSignup } from "../../api/LoginAPI";
 import { store } from "../../stores/store";
 import { setLoggedIn, setCurrentUserName } from "../../stores/slices/RivuletSlice";
+import { clearUserState } from "../../stores/slices/UserSlice";
+import { clearPersistence, inMemoryDB } from "../../api/InMemoryDB";
 
 const STORAGE_USERNAME_KEY = 'rivulet_username';
 const STORAGE_HASH_KEY = 'rivulet_hash';
@@ -23,8 +25,9 @@ export async function handleLoginSignup(name: string, username: string, password
 }
 
 export async function handleLogout() {
-    localStorage.removeItem(STORAGE_USERNAME_KEY);
-    localStorage.removeItem(STORAGE_HASH_KEY);
+    inMemoryDB.clearSession();
+    clearPersistence();
+    store.dispatch(clearUserState());
     store.dispatch(setLoggedIn(false));
     store.dispatch(setCurrentUserName(''));
 }

@@ -11,6 +11,8 @@ npm run lint      # ESLint on all source files
 npm run preview   # Preview production build locally
 ```
 
+When using `cd`, you must always wrap the directory you want to go to in quotes (e.g. `cd "/c/Example Folder") instead of using backslash escapes.
+
 There is no test framework configured yet.
 
 ## Architecture
@@ -64,18 +66,9 @@ if (API_MODE === 'psql') {
 }
 ```
 
-The in-memory DB flat-files into arrays of objects keyed by user ID, with SHA-256 password hashing via `window.crypto.subtle.digest`. A seeded dev user (`dev`/`password`) exists for development.
-
 ### TypeScript strictness
 
 `noUnusedLocals` and `noUnusedParameters` are enabled in [tsconfig.app.json](tsconfig.app.json). Unused variables/params will cause build failures.
-
-## Known technical debt (from TODO.md)
-
-1. Split `UserModelAPI` into more relevant subcomponents
-2. Create a frontend logger
-3. Move store-server communication out of API files into a separate layer
-4. Standardize the guild/server naming inconsistency
 
 ## Architecture reference
 

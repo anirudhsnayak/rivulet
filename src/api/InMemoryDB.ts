@@ -259,6 +259,11 @@ class InMemoryDB {
   // ------------------------------------------------------------------------
   // Account
   // ------------------------------------------------------------------------
+  /** Clear the current session — called on logout. Does not erase stored data. */
+  clearSession(): void {
+    this.currentUserId = null;
+  }
+
   async login(username: string, hash: string): Promise<boolean> {
     await this._ensureSeeded();
     await this._delay();
@@ -466,3 +471,15 @@ class InMemoryDB {
 // Export singleton instance
 // ---------------------------------------------------------------------------
 export const inMemoryDB = new InMemoryDB();
+
+// ---------------------------------------------------------------------------
+// Clear all persisted data from localStorage (auth + db)
+// ---------------------------------------------------------------------------
+const STORAGE_USERNAME_KEY = 'rivulet_username';
+const STORAGE_HASH_KEY = 'rivulet_hash';
+
+export function clearPersistence(): void {
+    localStorage.removeItem(STORAGE_USERNAME_KEY);
+    localStorage.removeItem(STORAGE_HASH_KEY);
+    localStorage.removeItem(STORAGE_KEY);
+}

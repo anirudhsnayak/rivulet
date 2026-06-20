@@ -26,7 +26,7 @@ function Rivulet() {
             sx={{
                 display: 'grid',
                 gridTemplateColumns: '4rem 10rem 1fr 10rem',
-                gridTemplateRows: '1fr 5rem',
+                gridTemplateRows: '1fr',
                 height: '100vh',
                 width: '100vw',
                 backgroundColor: 'background.default',
@@ -34,7 +34,7 @@ function Rivulet() {
         >
             <Box sx={{ gridColumn: '1 / -1' }}><SpaceCreationModal/></Box>
             <Box sx={{ gridColumn: '1 / -1' }}><InviteReceivedModal/></Box>
-            {/* Server List */}
+            {/* Server List (row 1, col 1) */}
             <Box
                 sx={{
                     gridRow: '1 / 2',
@@ -47,7 +47,7 @@ function Rivulet() {
             <ServerList />
             </Box>
 
-            {/* Channel Sidebar */}
+            {/* Channel Sidebar (row 1, col 2) */}
             <Box
                 sx={{
                     gridRow: '1 / 2',
@@ -65,10 +65,10 @@ function Rivulet() {
                 <ChannelList />
             </Box>
 
-            {/* Message List */}
+            {/* Message List (spans both rows, col 3) */}
            <Box
                 sx={{
-                    gridRow: '1 / 3',
+                    gridRow: '1 / -1',
                     gridColumn: '3 / 4',
                     height: '100%',
                     backgroundColor: 'background.main',
@@ -78,10 +78,10 @@ function Rivulet() {
                 <MessageList/>
            </Box>
 
-            {/* Member List */}
+            {/* Member List (spans both rows, col 4) */}
            <Box
                 sx={{
-                    gridRow: '1 / 3',
+                    gridRow: '1 / -1',
                     gridColumn: '4 / 5',
                     height: '100%',
                     backgroundColor: 'primary.main',
@@ -92,11 +92,12 @@ function Rivulet() {
                 <MemberList/>
            </Box>
 
-            {/* User Info (bottom-left, spans server list + channel sidebar) */}
+            {/* User Info (overlays bottom of col 1-2) */}
             <Box
                 sx={{
-                    gridRow: '2 / 3',
+                    gridRow: '1 / 2',
                     gridColumn: '1 / 3',
+                    alignSelf: 'end',
                 }}>
                 <UserInfo />
             </Box>

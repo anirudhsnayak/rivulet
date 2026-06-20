@@ -64,16 +64,19 @@ export const UserSlice = createSlice({
         if(state.visibleChannels.length > 0) {
             state.currentChannelId = state.visibleChannels[state.visibleChannels.length - 1].channelId;
         }
+    },
+    clearUserState: () => {
+        return initialState;
     }
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { 
+export const {
     setGuilds, addGuild, removeGuild, setCurrentGuildById,
     setChannels, addChannel, removeChannel, setCurrentChannelById, setCurrentChannelToLast,
     setMessages, addMessage, removeMessage,
-    setMembers,
+    setMembers, clearUserState,
 } = UserSlice.actions
 
 export default UserSlice.reducer
