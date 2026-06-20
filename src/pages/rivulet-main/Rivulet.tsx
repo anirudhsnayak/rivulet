@@ -8,6 +8,7 @@ import { updateUserModel } from '../../api/UserModelAPI';
 import { SpaceCreationModal } from './space-creation/SpaceCreationModal';
 import { InviteReceivedModal } from './space-creation/InviteReceivedModal';
 import { MemberList } from './members/MemberList';
+import { UserInfo } from './user-info/UserInfo';
 import { store } from '../../stores/store';
 import { switchToServer } from '../../controllers/rivulet-main/ServerController';
 
@@ -25,16 +26,19 @@ function Rivulet() {
             sx={{
                 display: 'grid',
                 gridTemplateColumns: '4rem 10rem 1fr 10rem',
+                gridTemplateRows: '1fr 5rem',
                 height: '100vh',
                 width: '100vw',
                 backgroundColor: 'background.default',
             }}
         >
-            <SpaceCreationModal/>
-            <InviteReceivedModal/>
+            <Box sx={{ gridColumn: '1 / -1' }}><SpaceCreationModal/></Box>
+            <Box sx={{ gridColumn: '1 / -1' }}><InviteReceivedModal/></Box>
             {/* Server List */}
             <Box
                 sx={{
+                    gridRow: '1 / 2',
+                    gridColumn: '1 / 2',
                     height: '100%',
                     backgroundColor: 'background.main',
                     borderRight: '2px solid grey.500',
@@ -46,6 +50,8 @@ function Rivulet() {
             {/* Channel Sidebar */}
             <Box
                 sx={{
+                    gridRow: '1 / 2',
+                    gridColumn: '2 / 3',
                     height: '100%',
                     display: 'flex',
                     flexDirection: 'column',
@@ -62,6 +68,8 @@ function Rivulet() {
             {/* Message List */}
            <Box
                 sx={{
+                    gridRow: '1 / 3',
+                    gridColumn: '3 / 4',
                     height: '100%',
                     backgroundColor: 'background.main',
                     display: 'flex',
@@ -73,6 +81,8 @@ function Rivulet() {
             {/* Member List */}
            <Box
                 sx={{
+                    gridRow: '1 / 3',
+                    gridColumn: '4 / 5',
                     height: '100%',
                     backgroundColor: 'primary.main',
                     display: 'flex',
@@ -81,6 +91,15 @@ function Rivulet() {
                 }}>
                 <MemberList/>
            </Box>
+
+            {/* User Info (bottom-left, spans server list + channel sidebar) */}
+            <Box
+                sx={{
+                    gridRow: '2 / 3',
+                    gridColumn: '1 / 3',
+                }}>
+                <UserInfo />
+            </Box>
         </Box>
     );
 }

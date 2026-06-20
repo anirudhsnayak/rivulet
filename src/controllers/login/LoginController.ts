@@ -1,6 +1,6 @@
 import { handleLogin, handleSignup } from "../../api/LoginAPI";
 import { store } from "../../stores/store";
-import { setLoggedIn } from "../../stores/slices/RivuletSlice";
+import { setLoggedIn, setCurrentUserName } from "../../stores/slices/RivuletSlice";
 
 const STORAGE_USERNAME_KEY = 'rivulet_username';
 const STORAGE_HASH_KEY = 'rivulet_hash';
@@ -15,6 +15,7 @@ export async function handleLoginSignup(name: string, username: string, password
     }
     if(successfulLogin) {
         store.dispatch(setLoggedIn(true));
+        store.dispatch(setCurrentUserName(username));
         localStorage.setItem(STORAGE_USERNAME_KEY, username);
         localStorage.setItem(STORAGE_HASH_KEY, hash);
     }
@@ -25,6 +26,7 @@ export async function handleLogout() {
     localStorage.removeItem(STORAGE_USERNAME_KEY);
     localStorage.removeItem(STORAGE_HASH_KEY);
     store.dispatch(setLoggedIn(false));
+    store.dispatch(setCurrentUserName(''));
 }
 
 async function computeHash(username: string, password: string) : Promise<string> {
