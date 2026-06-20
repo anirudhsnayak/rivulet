@@ -76,3 +76,7 @@ The in-memory DB flat-files into arrays of objects keyed by user ID, with SHA-25
 2. Create a frontend logger
 3. Move store-server communication out of API files into a separate layer
 4. Standardize the guild/server naming inconsistency
+
+## Architecture reference
+
+See [docs/architecture.md](docs/architecture.md) for the full login-to-app flow, CSS Grid layout breakdown, Redux store structure, InMemoryDB data model, and complete component tree.
