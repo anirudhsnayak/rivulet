@@ -23,24 +23,21 @@ function Rivulet() {
     return (
         <Box
             sx={{
-                display: 'flex',
-                justifyContent: 'left',
-                alignItems: 'center',
-                height: '100vh', // Full viewport height
-                width: '100vw', // Full viewport width
-                backgroundColor: 'background.default', // Use theme's default background color
-            }} 
-        > 
+                display: 'grid',
+                gridTemplateColumns: '4rem 10rem 1fr 10rem',
+                height: '100vh',
+                width: '100vw',
+                backgroundColor: 'background.default',
+            }}
+        >
             <SpaceCreationModal/>
             <InviteReceivedModal/>
             {/* Server List */}
             <Box
                 sx={{
-                    width: '4rem',
                     height: '100%',
                     backgroundColor: 'background.main',
                     borderRight: '2px solid grey.500',
-                    flexShrink: 0,
                 }}
             >
             <ServerList />
@@ -50,24 +47,21 @@ function Rivulet() {
             <Box
                 sx={{
                     height: '100%',
-                    width: '10rem',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'flex-start',
                     alignItems: 'center',
                     backgroundColor: 'primary.main',
-                    flexShrink: 0,
                     overflow: 'hidden',
                 }}
             >
                 <ServerInfo />
                 <ChannelList />
-            </Box>   
+            </Box>
 
             {/* Message List */}
            <Box
                 sx={{
-                    flexGrow: 1,
                     height: '100%',
                     backgroundColor: 'background.main',
                     display: 'flex',
@@ -79,13 +73,11 @@ function Rivulet() {
             {/* Member List */}
            <Box
                 sx={{
-                    width: '10rem',
                     height: '100%',
                     backgroundColor: 'primary.main',
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    flexShrink: 0,
                 }}>
                 <MemberList/>
            </Box>
