@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { inMemoryDB } from '../api/InMemoryDB';
 import { store } from '../stores/store';
-import { setLoggedIn } from '../stores/slices/RivuletSlice';
+import { setLoggedIn, setCurrentUserName } from '../stores/slices/RivuletSlice';
 import { API_MODE } from '../api/ApiConfig';
 
 const STORAGE_USERNAME_KEY = 'rivulet_username';
@@ -23,6 +23,7 @@ export function useRestoreSession() {
             inMemoryDB.login(username, hash).then((ok) => {
                 if (ok) {
                     store.dispatch(setLoggedIn(true));
+                    store.dispatch(setCurrentUserName(username));
                 }
                 setSessionRestored(true);
             }).catch(() => {
