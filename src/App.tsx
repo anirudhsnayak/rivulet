@@ -5,8 +5,10 @@ import currentTheme from './theme/theme';
 import { Login } from './pages/login/Login';
 import { Rivulet } from './pages/rivulet-main/Rivulet';
 import { Invite } from './pages/invite/Invite';
+import { useRestoreSession } from './hooks/useRestoreSession';
 
 export default function App() {
+    const sessionRestored = useRestoreSession();
     const [showNav, setShowNav] = useState(false);
 
     useEffect(() => {
@@ -17,6 +19,14 @@ export default function App() {
         window.addEventListener('mousemove', handleMouseMove);
         return () => window.removeEventListener('mousemove', handleMouseMove);
     }, []);
+
+    if (!sessionRestored) {
+        return (
+            <ThemeProvider theme={currentTheme}>
+                <StrictMode />
+            </ThemeProvider>
+        );
+    }
 
     return (
         <ThemeProvider theme={currentTheme}>
