@@ -30,6 +30,7 @@ const ChannelListContainerStyle = {
     height: '100%',
     alignItems: 'center',
     justifyContent: 'flex-start',
+    overflow: 'hidden',
 }
 
 const ChannelListHeader = styled(Box)(({ theme }) => ({
@@ -74,6 +75,7 @@ const ChannelListStyle = {
     justifyContent: 'flex-start',
     flexGrow: 1,
     overflowY: 'auto' as 'auto',
+    overflowX: 'hidden' as 'hidden',
 }
 
 export function ChannelList() {

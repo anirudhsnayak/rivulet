@@ -57,6 +57,7 @@ function Rivulet() {
                     alignItems: 'center',
                     backgroundColor: 'primary.main',
                     flexShrink: 0,
+                    overflow: 'hidden',
                 }}
             >
                 <ServerInfo />
