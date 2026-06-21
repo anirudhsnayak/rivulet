@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { styled } from '@mui/material/styles';
+import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Logout from '@mui/icons-material/Logout';
 import { InviteModal } from './InviteModal';
@@ -23,18 +24,24 @@ const ServerInfoContainer = styled(Box)(({ theme }) => ({
     flexShrink: 0,
 }));
 
+const ServerNameRow = styled(Box)({
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '0.125rem',
+    width: '100%',
+    '&:hover': {
+        cursor: 'pointer',
+    },
+});
+
 const ServerName = styled(Typography)(({ theme }) => ({
     color: theme.palette.text.primary,
     fontWeight: 700,
     fontSize: '0.9rem',
-    textAlign: 'center',
-    width: '100%',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
-    '&:hover': {
-        cursor: 'pointer',
-    },
 }));
 
 const InviteButton = styled('button')(({ theme }) => ({
@@ -85,7 +92,10 @@ export function ServerInfo() {
 
     return (
         <ServerInfoContainer>
-            <ServerName variant="body2" onClick={handleNameClick}>{serverName}</ServerName>
+            <ServerNameRow onClick={handleNameClick}>
+                <ServerName variant="body2">{serverName}</ServerName>
+                <ArrowDropDown sx={{ fontSize: '1.1rem', color: 'text.primary' }} />
+            </ServerNameRow>
             <Menu
                 anchorEl={anchorEl}
                 open={menuOpen}
