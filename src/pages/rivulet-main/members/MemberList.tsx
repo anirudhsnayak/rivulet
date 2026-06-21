@@ -5,8 +5,8 @@ import { styled } from '@mui/material/styles';
 
 const MemberEntry = styled(Box)<{ selected?: boolean }>(({ selected, theme }) => ({
     width: '100%',
-    margin: '0.25rem 0.5rem',
-    padding: '0.25rem 0.75rem',
+    margin: '0.1rem 0.5rem',
+    padding: '0.1rem 0.75rem',
     borderRadius: selected ? '6px' : '0px',
     backgroundColor: selected ? theme.palette.primary.lighter : 'transparent',
     display: 'flex',
@@ -20,10 +20,27 @@ const MemberEntry = styled(Box)<{ selected?: boolean }>(({ selected, theme }) =>
     },
 }));
 
+const MemberListHeader = styled(Box)(({ theme }) => ({
+    width: '100%',
+    boxSizing: 'border-box',
+    padding: '0.5rem 0.75rem',
+    display: 'flex',
+    flexDirection: 'row' as 'row',
+    color: theme.palette.text.disabled,
+    fontSize: '0.75rem',
+    fontWeight: 600,
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
+    flexShrink: 0,
+}));
+
 export function MemberList() {
     const members = useSelector((state: RootState) => state.UserSlice.visibleMembers);
     return (
         <>
+            <MemberListHeader>
+                <span>Members &ndash; {members.length}</span> 
+            </MemberListHeader>
             {Array.from({ length: members.length }, (_, index) => (
                 <MemberEntry key={index}>
                     {members[index].memberName}
