@@ -1,5 +1,5 @@
 import { RivuletTextField } from "../../../components/RivuletTextField";
-import { createMessage, reloadMessages } from "../../../api/MessageAPI";
+import { createMessage } from "../../../api/MessageAPI";
 import { store } from "../../../stores/store";
 import { useState } from "react";
 
@@ -9,7 +9,6 @@ async function handleMessageSend(message: string) {
     let currentGuildId = store.getState().UserSlice.currentGuildId;
     let currentChannelId = store.getState().UserSlice.currentChannelId;
     await createMessage(currentGuildId, currentChannelId, message);
-    await reloadMessages(); //TODO: this is inefficient
 }
 
 export function MessageField() {

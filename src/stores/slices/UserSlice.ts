@@ -62,8 +62,8 @@ export const UserSlice = createSlice({
     setMessages(state, action: PayloadAction<Message[]>) {
         state.visibleMessages = action.payload;
     },
-    addMessage: (state) => {
-        state.visibleMessages.push(Message(0, 0, state.visibleMessages.length + 1, 'This is a message', 'Dev'));
+    addMessage: (state, action: PayloadAction<Message>) => {
+        state.visibleMessages.push(action.payload);
     },
     removeMessage: (state) => {
         if (state.visibleMessages.length > 0) {

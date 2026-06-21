@@ -2,6 +2,7 @@ import type { ChannelDB } from "../models/db/ChannelDB";
 import type { MessageDB } from "../models/db/MessageDB";
 import type { ServerDB } from "../models/db/ServerDB";
 import type { ServerMemberDB } from "../models/db/ServerMemberDB";
+import { eventBus, Events } from "./EventBus";
 
 // ---------------------------------------------------------------------------
 // Internal data shapes (widen the DB interfaces so we can track extra fields)
@@ -439,6 +440,14 @@ class InMemoryDB {
     };
     this.messages.set(messageId, msg);
     this._persist();
+    eventBus.emit(Events.MessageCreated, {
+      guild_id: msg.guild_id,
+      channel_id: msg.channel_id,
+      user_id: msg.user_id,
+      message_id: msg.message_id,
+      message_text: msg.message_text,
+      author_name: authorName,
+    });
     return {
       guild_id: msg.guild_id,
       channel_id: msg.channel_id,

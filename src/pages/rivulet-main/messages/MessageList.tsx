@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import { MessageField } from './MessageField';
+import { useMessageStream } from '../../../hooks/useMessageStream';
 
 const MessagesContainer = styled(Box)(() => ({
     flexGrow: 1,
@@ -41,6 +42,8 @@ export function MessageList() {
         return state.UserSlice.visibleChannels.find(c => c.channelId === id)?.channelName ?? '';
     });
     const bottomRef = useRef<HTMLDivElement>(null);
+
+    useMessageStream();
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
