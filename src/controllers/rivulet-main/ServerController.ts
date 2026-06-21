@@ -1,3 +1,13 @@
+/**
+ * @file Server (guild) controller — switching and leaving servers.
+ *
+ * Orchestrates the full server-switching flow: fetches channels, members,
+ * and messages for the selected guild, then dispatches all Redux state
+ * changes in a single synchronous batch for a consistent render.
+ *
+ * @see {@link docs/architecture.md#server-switching-flow} — switching flow docs
+ */
+
 import { store } from '../../stores/store';
 import {
     setCurrentGuildById,
@@ -5,7 +15,6 @@ import {
     setChannels,
     setMembers,
     setMessages,
-    removeGuild,
 } from '../../stores/slices/UserSlice';
 import { requestChannels } from '../../api/ChannelAPI';
 import { getMembersInServer } from '../../api/MemberAPI';
@@ -19,6 +28,18 @@ import type { ChannelDB } from '../../models/db/ChannelDB';
 import type { ServerMemberDB } from '../../models/db/ServerMemberDB';
 import type { MessageDB } from '../../models/db/MessageDB';
 
+/**
+ * Switches the active view to a different server (guild).
+ *
+ * Fetches all channels, members, and the first channel's messages for the
+ * target guild **before** dispatching any Redux actions. This avoids
+ * intermediate renders with mismatched guild/channel state. All dispatches
+ * are batched by React 18 for a single consistent render.
+ *
+ * @param guildId - The ID of the guild to switch to.
+ *
+ * @see {@link switchToServer}
+ */
 export async function switchToServer(guildId: number) {
     // Fetch all data for the new server before touching Redux state —
     // this avoids intermediate renders with mismatched guild/channel data.
@@ -51,6 +72,11 @@ export async function switchToServer(guildId: number) {
     store.dispatch(setMessages(messageList));
 }
 
+/**
+ * Leaves a server and refreshes the user model from the API.
+ *
+ * @param guildId - The ID of the guild to leave.
+ */
 export async function leaveServer(guildId: number) {
     await leaveServerAPI(guildId);
     await updateUserModel();

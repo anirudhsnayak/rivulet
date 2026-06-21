@@ -1,3 +1,18 @@
+/**
+ * @file SSE-like message stream hook — subscribes to real-time messages.
+ *
+ * Listens for `Events.MessageCreated` events from the in-memory backend
+ * {@link EventBus} and appends matching messages (scoped to the current
+ * guild and channel) to the Redux store in real time.
+ *
+ * Designed to be swappable with a real `EventSource` / `fetch` + stream
+ * loop when a PostgreSQL SSE backend is connected — only the subscription
+ * mechanism changes, the dispatch logic stays the same.
+ *
+ * @see {@link EventBus} — in-memory event system
+ * @see {@link docs/architecture.md#message-sending-flow} — message flow docs
+ */
+
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { eventBus, Events } from '../api/EventBus';
