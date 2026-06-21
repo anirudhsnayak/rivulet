@@ -1,5 +1,5 @@
-import { StrictMode, useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-router-dom";
+import { StrictMode } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
 import currentTheme from './theme/theme';
@@ -17,16 +17,6 @@ function ProtectedRivulet() {
 
 export default function App() {
     const sessionRestored = useRestoreSession();
-    const [showNav, setShowNav] = useState(false);
-
-    useEffect(() => {
-        const handleMouseMove = (e: MouseEvent) => {
-            setShowNav(e.clientY < 50);
-        };
-
-        window.addEventListener('mousemove', handleMouseMove);
-        return () => window.removeEventListener('mousemove', handleMouseMove);
-    }, []);
 
     if (!sessionRestored) {
         return (
@@ -40,20 +30,6 @@ export default function App() {
         <ThemeProvider theme={currentTheme}>
             <StrictMode>
                 <Router>
-                    {showNav && (
-                        <nav
-                            style={{
-                                position: 'absolute',
-                                background: 'rgba(0, 0, 0, 1)',
-                                width: '100%',
-                                padding: '0.25rem',
-                            }}
-                        >
-                            <Link to="/login">Login</Link> |{" "}
-                            <Link to="/app">Rivulet</Link>
-                        </nav>
-                    )}
-
                     <Routes>
                         <Route path="/" element={<Navigate to="/login" replace />} />
                         <Route path="/login" element={<Login />} />
