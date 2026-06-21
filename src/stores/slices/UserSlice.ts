@@ -24,9 +24,19 @@ export const UserSlice = createSlice({
     addGuild: (state) => {
         state.guilds.push(Guild(state.guilds.length + 1, `Guild ${state.guilds.length + 1}`));
     },
-    removeGuild: (state) => {
-        if (state.guilds.length > 0) {
-            state.guilds.pop();
+    removeGuild: (state, action: PayloadAction<number>) => {
+        const guildId = action.payload;
+        state.guilds = state.guilds.filter((g) => g.guildId !== guildId);
+        if (state.currentGuildId === guildId) {
+            if (state.guilds.length > 0) {
+                state.currentGuildId = state.guilds[0].guildId;
+            } else {
+                state.currentGuildId = -1;
+                state.currentChannelId = -1;
+                state.visibleChannels = [];
+                state.visibleMessages = [];
+                state.visibleMembers = [];
+            }
         }
     },
     addChannel: (state) => {

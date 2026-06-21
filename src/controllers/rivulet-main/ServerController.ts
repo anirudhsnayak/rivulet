@@ -5,6 +5,7 @@ import {
     setChannels,
     setMembers,
     setMessages,
+    removeGuild,
 } from '../../stores/slices/UserSlice';
 import { requestChannels } from '../../api/ChannelAPI';
 import { getMembersInServer } from '../../api/MemberAPI';
@@ -46,4 +47,8 @@ export async function switchToServer(guildId: number) {
     store.dispatch(setMembers(members));
     store.dispatch(setCurrentChannelById(firstChannelId));
     store.dispatch(setMessages(messageList));
+}
+
+export async function leaveServer(guildId: number) {
+    store.dispatch(removeGuild(guildId));
 }

@@ -3,9 +3,13 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '../../../stores/store';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import { styled } from '@mui/material/styles';
 import PersonAdd from '@mui/icons-material/PersonAdd';
+import Logout from '@mui/icons-material/Logout';
 import { InviteModal } from './InviteModal';
+import { leaveServer } from '../../../controllers/rivulet-main/ServerController';
 
 const ServerInfoContainer = styled(Box)(({ theme }) => ({
     width: '100%',
@@ -28,6 +32,9 @@ const ServerName = styled(Typography)(({ theme }) => ({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
+    '&:hover': {
+        cursor: 'pointer',
+    },
 }));
 
 const InviteButton = styled('button')(({ theme }) => ({
@@ -58,10 +65,45 @@ export function ServerInfo() {
     const currentGuild = guilds.find((g) => g.guildId === currentGuildId);
     const serverName = currentGuild?.guildName ?? 'No Server';
     const [inviteModalOpen, setInviteModalOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+    const menuOpen = Boolean(anchorEl);
+
+    const handleNameClick = (e: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(e.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleLeaveServer = () => {
+        handleMenuClose();
+        if (currentGuildId !== -1) {
+            leaveServer(currentGuildId);
+        }
+    };
 
     return (
         <ServerInfoContainer>
-            <ServerName variant="body2">{serverName}</ServerName>
+            <ServerName variant="body2" onClick={handleNameClick}>{serverName}</ServerName>
+            <Menu
+                anchorEl={anchorEl}
+                open={menuOpen}
+                onClose={handleMenuClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+            >
+                <MenuItem onClick={handleLeaveServer} dense>
+                    <Logout sx={{ fontSize: '1rem', mr: 0.75 }} />
+                    Leave Server
+                </MenuItem>
+            </Menu>
             <InviteButton onClick={() => setInviteModalOpen(true)}>
                 Invite People
                 <PersonAdd sx={{ fontSize: '0.9rem' }} />
