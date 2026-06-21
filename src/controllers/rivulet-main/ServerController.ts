@@ -10,6 +10,8 @@ import {
 import { requestChannels } from '../../api/ChannelAPI';
 import { getMembersInServer } from '../../api/MemberAPI';
 import { requestMessages } from '../../api/MessageAPI';
+import { leaveServerAPI } from '../../api/ServerAPI';
+import { updateUserModel } from '../../api/UserModelAPI';
 import { Channel } from '../../models/server-hierarchy/Channel';
 import { ServerMember } from '../../models/server-hierarchy/ServerMember';
 import { Message } from '../../models/server-hierarchy/Message';
@@ -50,5 +52,6 @@ export async function switchToServer(guildId: number) {
 }
 
 export async function leaveServer(guildId: number) {
-    store.dispatch(removeGuild(guildId));
+    await leaveServerAPI(guildId);
+    await updateUserModel();
 }

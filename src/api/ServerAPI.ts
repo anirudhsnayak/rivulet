@@ -64,3 +64,26 @@ export async function getInviteCode(serverId: number) {
         console.error("Invite code retrieval failed:", response.statusText);
     }
 }
+
+export async function leaveServerAPI(serverId: number) {
+    if (API_MODE === "in-memory") {
+        await inMemoryDB.leaveServer(serverId);
+        console.log("Left server (in-memory):", serverId);
+        return;
+    }
+
+    const response = await fetch("http://localhost:3000/api/server/leave", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ serverId }),
+    });
+
+    if (response.ok) {
+        console.log("Left server successfully:", serverId);
+    } else {
+        console.error("Failed to leave server:", response.statusText);
+    }
+}

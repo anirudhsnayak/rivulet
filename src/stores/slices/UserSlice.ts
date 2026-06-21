@@ -17,8 +17,17 @@ export const UserSlice = createSlice({
   reducers: {
     setGuilds: (state, action: PayloadAction<Guild[]>) => {
         state.guilds = action.payload;
-        if(state.currentGuildId == -1 && state.guilds.length > 0) {
-            state.currentGuildId = state.guilds[0].guildId;
+        const currentStillExists = state.guilds.some((g) => g.guildId === state.currentGuildId);
+        if (!currentStillExists) {
+            if (state.guilds.length > 0) {
+                state.currentGuildId = state.guilds[0].guildId;
+            } else {
+                state.currentGuildId = -1;
+                state.currentChannelId = -1;
+                state.visibleChannels = [];
+                state.visibleMessages = [];
+                state.visibleMembers = [];
+            }
         }
     },
     addGuild: (state) => {

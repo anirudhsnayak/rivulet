@@ -364,6 +364,13 @@ class InMemoryDB {
     return true;
   }
 
+  async leaveServer(serverId: number): Promise<void> {
+    await this._delay();
+    const userId = this._requireAuth();
+    this.members.delete(this._memberKey(userId, serverId));
+    this._persist();
+  }
+
   // ------------------------------------------------------------------------
   // Channel
   // ------------------------------------------------------------------------
