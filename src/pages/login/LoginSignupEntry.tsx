@@ -1,3 +1,9 @@
+/**
+ * @file Login and signup UI — tabbed entry point for Rivulet authentication.
+ *
+ * @see {@link architecture.md | docs/architecture.md#login-flow} — login flow documentation
+ */
+
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -11,18 +17,35 @@ import { handleLoginSignup } from '../../controllers/login/LoginController';
 import { RivuletTextField } from '../../components/RivuletTextField';
 import { RivuletButton } from '../../components/RivuletButton';
 
+/**
+ * Login / Sign-up form portal rendered inside each tab panel.
+ *
+ * Contains the username field, password field, and submit button for one
+ * authentication mode (login or signup). Uses the shared `RivuletTextField`
+ * and `RivuletButton` components for a consistent look.
+ *
+ * On successful authentication, navigates to `/app`.
+ *
+ * @param props.value - Tab identifier (`"login"` or `"signup"`), forwarded to
+ *                      {@link handleLoginSignup} to determine the auth mode.
+ * @param props.name - Display name for the tab ("Login" or "Sign Up") used as
+ *                     the form heading and button label.
+ *
+ * @see {@link handleLoginSignup} — controller that hashes credentials and
+ *      calls the login/signup API
+ */
 function LoginSignupPortal(props: any) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
-    
+
     async function handleLoginClick() {
         const success = await handleLoginSignup(props.value, username, password);
         if (success) {
             navigate('/app');
         }
     }
-    
+
     return (
         <Stack spacing={2}>
             <div style={{
@@ -36,6 +59,22 @@ function LoginSignupPortal(props: any) {
     )
 }
 
+/**
+ * Tabbed login/signup card — the primary authentication UI.
+ *
+ * Displays a centered card with "Login" and "Sign Up" tabs powered by
+ * MUI's `TabContext` / `TabList` / `TabPanel`. Each tab renders a
+ * {@link LoginSignupPortal} which collects credentials and delegates to
+ * {@link handleLoginSignup} in the controller layer.
+ *
+ * The card uses custom tab styling via a styled `LoginTab` component,
+ * and reads accent colours from the MUI theme palette extensions
+ * (`tabs.main`, `tabs.tabTextSelected`).
+ *
+ * @see {@link Login} — parent page component rendered at `/login`
+ * @see {@link handleLoginSignup} — controller orchestrating API call + state dispatch
+ * @see {@link docs/architecture.md#login-flow} — end-to-end login sequence diagram
+ */
 function LoginSignupEntry() {
     const LoginTab = styled(Tab)(({ theme }) => ({
         color: theme.palette.text.primary,
@@ -46,8 +85,8 @@ function LoginSignupEntry() {
         //     color: theme.palette.button.main,
         // },
     }));
-    
-    
+
+
     const [value, setValue] = useState('login');
     function handleChange(_: React.SyntheticEvent, newValue: string) {
         setValue(newValue);
