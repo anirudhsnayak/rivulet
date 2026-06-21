@@ -1,6 +1,7 @@
 import { updateUserModel } from "./UserModelAPI";
 import { reloadChannels } from "./ChannelAPI";
-import { setCurrentGuildById } from "../stores/slices/UserSlice";
+import { reloadMessages } from "./MessageAPI";
+import { setCurrentGuildById, setCurrentChannelToLast } from "../stores/slices/UserSlice";
 import { store } from "../stores/store";
 import { API_MODE } from "./ApiConfig";
 import { inMemoryDB } from "./InMemoryDB";
@@ -13,7 +14,9 @@ export async function createServer(serverParams: { spaceName: string }) {
         console.log("Server creation successful (in-memory):", data);
         await updateUserModel();
         store.dispatch(setCurrentGuildById(data.created_server_id));
-        reloadChannels();
+        await reloadChannels();
+        store.dispatch(setCurrentChannelToLast());
+        await reloadMessages();
         return;
     }
 
@@ -33,7 +36,9 @@ export async function createServer(serverParams: { spaceName: string }) {
         // TODO: this code shouldn't be part of the API
         await updateUserModel(); // TODO: we already have this information in data
         store.dispatch(setCurrentGuildById(data.created_server_id));
-        reloadChannels();
+        await reloadChannels();
+        store.dispatch(setCurrentChannelToLast());
+        await reloadMessages();
     } else {
         console.error("Server creation failed:", response.statusText);
     }
