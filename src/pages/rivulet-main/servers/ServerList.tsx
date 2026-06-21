@@ -1,3 +1,17 @@
+/**
+ * @file Server (guild) list — the leftmost toolbar column.
+ *
+ * Renders an icon for each guild the user belongs to, plus a "+" button
+ * to create a new server. Clicking an icon switches to that server via
+ * {@link switchToServer}.
+ *
+ * Uses uppercase initials derived from the guild name as fallback icons.
+ *
+ * @see {@link switchToServer} — controller for server switching
+ * @see {@link ServerInfo} — server name + invite area
+ * @see {@link docs/architecture.md#main-app-layout-css-grid} — grid layout docs
+ */
+
 import Box from '@mui/material/Box';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../../stores/store';
@@ -7,11 +21,28 @@ import { setCreatingSpace } from '../../../stores/slices/RivuletSlice';
 import { SpaceCreationState } from '../../../models/global/SpaceCreationState';
 import { switchToServer } from '../../../controllers/rivulet-main/ServerController';
 
+/**
+ * Extracts uppercase initials from a channel or server name.
+ * Falls back to `"?"` for empty or undefined names.
+ *
+ * @param channelName - The name to derive initials from.
+ * @returns Uppercase initial letters joined together.
+ *
+ * @example
+ * noIconRenderText("Rivulet HQ") // "RH"
+ * noIconRenderText("")            // "?"
+ */
 function noIconRenderText(channelName: string): string {
     if(channelName == undefined || channelName.length == 0) return '?';
     return channelName.split(' ').map(word => word[0]).join('').toUpperCase();
 }
 
+/**
+ * Styled server icon square with optional selection border.
+ *
+ * The `selected` prop controls whether a highlight border is drawn,
+ * matching the currently active guild.
+ */
 const ServerIcon = styled(Box)<{ selected?: boolean }>(({ selected }) => ({
     borderRadius: '30%',
     width: 'auto',
@@ -31,6 +62,12 @@ const ServerIcon = styled(Box)<{ selected?: boolean }>(({ selected }) => ({
 }));
 
 
+/**
+ * Server (guild) list — the leftmost toolbar column.
+ *
+ * Displays clickable icons for each guild. The currently selected guild
+ * is visually highlighted. An extra "+" icon opens the server creation modal.
+ */
 export function ServerList() {
     const guilds = useSelector((state: RootState) => state.UserSlice.guilds);
     const dispatch = useDispatch();
@@ -40,7 +77,7 @@ export function ServerList() {
     return (
         <div>
             {guilds.map((guild, index) => (
-            <ServerIcon 
+            <ServerIcon
                 key={index}
                 selected={selectedGuild === guild.guildId}
                 onClick={() => switchToServer(guild.guildId)}
@@ -53,5 +90,5 @@ export function ServerList() {
             >+</ServerIcon>
         </div>
     );
-    
+
 }

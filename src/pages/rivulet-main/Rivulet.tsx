@@ -1,3 +1,17 @@
+/**
+ * @file Main application layout — the primary workspace after login.
+ *
+ * Rendered at `/app`. Assembles a 4-column CSS Grid layout containing
+ * the server list, channel sidebar, message area, member list, and
+ * user info panel. Also hosts the overlay modals for space creation
+ * and invite handling.
+ *
+ * On mount, hydrates the user model from the API and auto-selects the
+ * first guild if one is available.
+ *
+ * @see {@link docs/architecture.md#main-app-layout-css-grid} — grid layout docs
+ */
+
 import Box from '@mui/material/Box';
 import { ServerList } from './servers/ServerList';
 import { ChannelList } from './channels/ChannelList';
@@ -12,6 +26,22 @@ import { UserInfo } from './user-info/UserInfo';
 import { store } from '../../stores/store';
 import { switchToServer } from '../../controllers/rivulet-main/ServerController';
 
+/**
+ * Main application layout — the primary workspace after login.
+ *
+ * CSS Grid structure (4 columns × 1 row, with overlays):
+ * ```
+ * +--------+----------+------------------+----------+
+ * | Server | Channel  |   MessageList    |  Member  |
+ * | List   | Sidebar  |   (1fr)          |  List    |
+ * | (4rem) | (10rem)  |                  | (10rem)  |
+ * +--------+----------+------------------+----------+
+ * |              UserInfo (col 1-2, self-end)       |
+ * +--------+----------+------------------+----------+
+ * ```
+ *
+ * Overlays (col 1 / -1): {@link SpaceCreationModal}, {@link InviteReceivedModal}
+ */
 function Rivulet() {
     useEffect(() => {
         updateUserModel().then(() => {

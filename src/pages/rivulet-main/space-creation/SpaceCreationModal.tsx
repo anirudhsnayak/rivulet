@@ -1,3 +1,16 @@
+/**
+ * @file Space creation modal — form for creating a new server or channel.
+ *
+ * A single modal component that renders different content based on the
+ * current {@link SpaceCreationState} value in Redux. Displays a text
+ * input and a submit button, delegating creation logic to
+ * {@link handleSpaceCreation}.
+ *
+ * @see {@link SpaceCreationState} — enum controlling which modal is shown
+ * @see {@link handleSpaceCreation} — controller for the creation logic
+ * @see {@link docs/architecture.md#space-creation-flow} — creation flow docs
+ */
+
 import Box from '@mui/material/Box';
 import { RivuletButton } from '../../../components/RivuletButton';
 import Modal from '@mui/material/Modal';
@@ -10,6 +23,7 @@ import { RivuletTextField } from '../../../components/RivuletTextField';
 import { handleSpaceCreation } from '../../../controllers/rivulet-main/SpaceCreationController';
 import { useState } from 'react';
 
+/** Centered modal card styling with generous padding. */
 const style = {
     position: 'absolute' as 'absolute',
     top: '50%',
@@ -22,6 +36,14 @@ const style = {
     padding: '4rem',
 }
 
+/**
+ * Space creation modal — shown when creating a server or a channel.
+ *
+ * Controlled by {@link RivuletState.creatingSpace}. The modal adapts its
+ * title ("Create a New Server" / "Create a New Channel") and button label
+ * based on which creation state is active. Closes on backdrop click or
+ * after successful creation.
+ */
 export function SpaceCreationModal() {
     const creatingSpace = useSelector(
          (state: RootState) => state.RivuletState.creatingSpace
@@ -44,7 +66,7 @@ export function SpaceCreationModal() {
     const guildId = useSelector((state: RootState) => state.UserSlice.currentGuildId);
     return (
     <>
-        <Modal open={creatingSpace != SpaceCreationState.NotCreatingSpace} 
+        <Modal open={creatingSpace != SpaceCreationState.NotCreatingSpace}
                onClose={() => {
                     dispatch(setCreatingSpace(SpaceCreationState.NotCreatingSpace));
                }}>
@@ -54,16 +76,16 @@ export function SpaceCreationModal() {
             </Typography>
 
             {/* Server Name */}
-            <RivuletTextField 
+            <RivuletTextField
                 label = {`${spaceType} Name`}
-                sx={{ width: '100%' }} 
+                sx={{ width: '100%' }}
                 value={spaceName}
                 onChange={(e: any) => setSpaceName(e.target.value)}
             />
 
             {/* Box that contains the Create Server button, center contents and self*/}
-            <Box sx={{ 
-                marginTop: '1rem', 
+            <Box sx={{
+                marginTop: '1rem',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',

@@ -1,3 +1,14 @@
+/**
+ * @file Server info header — the top section of the channel sidebar.
+ *
+ * Displays the current server name (with a dropdown menu for leaving)
+ * and an "Invite People" button. Rendered in the channel sidebar column
+ * (col 2, top) of the main grid layout.
+ *
+ * @see {@link InviteModal} — invite link generation modal
+ * @see {@link docs/architecture.md#main-app-layout-css-grid} — grid layout docs
+ */
+
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../stores/store';
@@ -12,6 +23,7 @@ import Logout from '@mui/icons-material/Logout';
 import { InviteModal } from './InviteModal';
 import { leaveServer } from '../../../controllers/rivulet-main/ServerController';
 
+/** Container for the server info block with a bottom divider. */
 const ServerInfoContainer = styled(Box)(({ theme }) => ({
     width: '100%',
     boxSizing: 'border-box',
@@ -24,6 +36,7 @@ const ServerInfoContainer = styled(Box)(({ theme }) => ({
     flexShrink: 0,
 }));
 
+/** Clickable row showing the server name and dropdown arrow. */
 const ServerNameRow = styled(Box)({
     display: 'inline-flex',
     alignItems: 'center',
@@ -35,6 +48,7 @@ const ServerNameRow = styled(Box)({
     },
 });
 
+/** Bold server name text with overflow ellipsis. */
 const ServerName = styled(Typography)(({ theme }) => ({
     color: theme.palette.text.primary,
     fontWeight: 700,
@@ -44,6 +58,7 @@ const ServerName = styled(Typography)(({ theme }) => ({
     whiteSpace: 'nowrap',
 }));
 
+/** "Invite People" button styled as a small pill. */
 const InviteButton = styled('button')(({ theme }) => ({
     width: '100%',
     padding: '0.25rem 0.5rem',
@@ -66,6 +81,13 @@ const InviteButton = styled('button')(({ theme }) => ({
     },
 }));
 
+/**
+ * Server info header — shows the current server name and invite controls.
+ *
+ * Clicking the server name opens a dropdown menu with a "Leave Server" option.
+ * The "Invite People" button opens the {@link InviteModal} for sharing an
+ * invite link with others.
+ */
 export function ServerInfo() {
     const guilds = useSelector((state: RootState) => state.UserSlice.guilds);
     const currentGuildId = useSelector((state: RootState) => state.UserSlice.currentGuildId);

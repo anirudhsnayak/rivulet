@@ -1,8 +1,18 @@
+/**
+ * @file Member list — the rightmost column showing server members.
+ *
+ * Displays all members of the currently selected server with a count
+ * header. Rendered in grid column 4 of the main layout.
+ *
+ * @see {@link docs/architecture.md#main-app-layout-css-grid} — grid layout docs
+ */
+
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../stores/store';
 import Box from '@mui/material/Box';
-import { styled } from '@mui/material/styles'; 
+import { styled } from '@mui/material/styles';
 
+/** A single member row with optional selection highlight. */
 const MemberEntry = styled(Box)<{ selected?: boolean }>(({ selected, theme }) => ({
     width: '100%',
     margin: '0.1rem 0.5rem',
@@ -20,6 +30,7 @@ const MemberEntry = styled(Box)<{ selected?: boolean }>(({ selected, theme }) =>
     },
 }));
 
+/** "Members — {count}" header row. */
 const MemberListHeader = styled(Box)(({ theme }) => ({
     width: '100%',
     boxSizing: 'border-box',
@@ -34,12 +45,16 @@ const MemberListHeader = styled(Box)(({ theme }) => ({
     flexShrink: 0,
 }));
 
+/**
+ * Member list — the rightmost panel showing all members of the currently
+ * selected server. Displays each member's name and a total count header.
+ */
 export function MemberList() {
     const members = useSelector((state: RootState) => state.UserSlice.visibleMembers);
     return (
         <>
             <MemberListHeader>
-                <span>Members &ndash; {members.length}</span> 
+                <span>Members &ndash; {members.length}</span>
             </MemberListHeader>
             {Array.from({ length: members.length }, (_, index) => (
                 <MemberEntry key={index}>

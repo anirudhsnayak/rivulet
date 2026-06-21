@@ -1,3 +1,16 @@
+/**
+ * @file Invite received modal — accepts or declines a pending server invite.
+ *
+ * When a user navigates to `/invite/:inviteId` and logs in (or is already
+ * logged in), this modal displays with Accept / Decline buttons. Accepting
+ * joins the server via {@link joinServerWithInvite}; declining clears the
+ * pending invite from Redux.
+ *
+ * @see {@link setPendingInvite} — Redux action that stores the invite code
+ * @see {@link Invite} — landing page that dispatches the invite code
+ * @see {@link docs/architecture.md#receiving-an-invite} — invite flow docs
+ */
+
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Modal from '@mui/material/Modal';
@@ -9,6 +22,7 @@ import { setPendingInvite } from '../../../stores/slices/RivuletSlice';
 import { joinServerWithInvite } from '../../../api/UserModelAPI';
 import { RivuletButton } from '../../../components/RivuletButton';
 
+/** Centered modal card styling with a mail icon header. */
 const style = {
     position: 'absolute' as 'absolute',
     top: '50%',
@@ -26,12 +40,21 @@ const style = {
     minWidth: '300px',
 };
 
+/** Horizontal row for the Accept / Decline buttons. */
 const buttonRow = {
     display: 'flex',
     gap: '1rem',
     justifyContent: 'center',
 };
 
+/**
+ * Invite received modal — prompts the user to accept or decline a server
+ * invite.
+ *
+ * Visible when {@link RivuletState.pendingInvite} is non-null (i.e. the
+ * user arrived via an invite link). On accept, joins the server and
+ * clears the invite. On decline, simply clears the invite.
+ */
 export function InviteReceivedModal() {
     const dispatch = useDispatch();
     const pendingInvite = useSelector((state: RootState) => state.RivuletState.pendingInvite);

@@ -1,3 +1,15 @@
+/**
+ * @file Channel list — the scrollable channel sidebar under {@link ServerInfo}.
+ *
+ * Displays all visible channels for the currently selected server.
+ * Clicking a channel selects it via {@link selectChannel}. Right-clicking
+ * opens a context menu with an "Add Channel" option.
+ *
+ * @see {@link selectChannel} — controller for channel switching
+ * @see {@link openChannelCreationModal} — opens the space creation modal
+ * @see {@link SpaceCreationModal} — the creation form modal
+ */
+
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../stores/store';
 import Box from '@mui/material/Box';
@@ -7,6 +19,9 @@ import { styled } from '@mui/material/styles';
 import { openChannelCreationModal, selectChannel } from '../../../controllers/rivulet-main/ChannelController';
 import { useState } from 'react';
 
+/**
+ * A single channel row — highlighted when selected, clickable to switch.
+ */
 const ChannelRow = styled(Box)<{ selected?: boolean }>(({ selected, theme }) => ({
     width: 'auto',
     margin: '0.25rem 0.5rem',
@@ -23,6 +38,7 @@ const ChannelRow = styled(Box)<{ selected?: boolean }>(({ selected, theme }) => 
     },
 }));
 
+/** Outer container — full height, overflow hidden. */
 const ChannelListContainerStyle = {
     display: 'flex',
     flexDirection: 'column' as 'column',
@@ -33,6 +49,7 @@ const ChannelListContainerStyle = {
     overflow: 'hidden',
 }
 
+/** "# Channels" header row with a "+" add button. */
 const ChannelListHeader = styled(Box)(({ theme }) => ({
     width: '100%',
     boxSizing: 'border-box',
@@ -49,6 +66,7 @@ const ChannelListHeader = styled(Box)(({ theme }) => ({
     flexShrink: 0,
 }));
 
+/** Small "＋" button for adding a channel. */
 const AddButton = styled('button')(({ theme }) => ({
     background: 'none',
     border: 'none',
@@ -68,6 +86,7 @@ const AddButton = styled('button')(({ theme }) => ({
     },
 }));
 
+/** Scrollable channel list region with right-click context menu support. */
 const ChannelListStyle = {
     width: '100%',
     display: 'flex',
@@ -78,6 +97,14 @@ const ChannelListStyle = {
     overflowX: 'hidden' as 'hidden',
 }
 
+/**
+ * Channel list — the scrollable sidebar section showing all channels
+ * in the currently selected server.
+ *
+ * Clicking a channel via {@link selectChannel} loads its messages.
+ * Right-clicking opens a context menu to add a new channel via
+ * {@link openChannelCreationModal}.
+ */
 export function ChannelList() {
     const channels = useSelector((state: RootState) => state.UserSlice.visibleChannels);
     const selectedChannel = useSelector((state: RootState) => state.UserSlice.currentChannelId);

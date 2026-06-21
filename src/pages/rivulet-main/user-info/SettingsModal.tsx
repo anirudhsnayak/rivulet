@@ -1,3 +1,14 @@
+/**
+ * @file Settings modal — logout and account settings.
+ *
+ * A simple MUI Modal with a logout button. Calls {@link handleLogout}
+ * from the login controller and navigates to `/login` on success.
+ *
+ * @see {@link UserInfo} — parent component that controls this modal
+ * @see {@link handleLogout} — controller that clears session state
+ * @see {@link docs/architecture.md#known-technical-debt} — logout UI tech debt
+ */
+
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import Modal from '@mui/material/Modal';
@@ -6,6 +17,7 @@ import Typography from '@mui/material/Typography';
 import { RivuletButton } from '../../../components/RivuletButton';
 import { handleLogout } from '../../../controllers/login/LoginController';
 
+/** Centered modal card styling. */
 const style = {
     position: 'absolute' as 'absolute',
     top: '50%',
@@ -23,11 +35,20 @@ const style = {
     minWidth: '320px',
 };
 
+/** Props for the {@link SettingsModal} component. */
 interface SettingsModalProps {
+    /** Whether the modal is visible. */
     open: boolean;
+    /** Callback fired when the modal requests to close. */
     onClose: () => void;
 }
 
+/**
+ * Settings modal — provides a logout button for the current user.
+ *
+ * On logout, calls {@link handleLogout} (clears Redux state and localStorage)
+ * and navigates to the login page.
+ */
 export function SettingsModal({ open, onClose }: SettingsModalProps) {
     const navigate = useNavigate();
 
