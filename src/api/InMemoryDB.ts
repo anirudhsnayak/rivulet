@@ -1,3 +1,20 @@
+/**
+ * @file In-memory database singleton — the default dev backend for Rivulet.
+ *
+ * Provides a full in-memory data store backed by localStorage persistence,
+ * eliminating the need for a PostgreSQL server during UI development.
+ * All data is reloaded from localStorage on page refresh.
+ *
+ * The database includes default seed data on first visit (a dev user
+ * "dev"/"password", a "Rivulet HQ" server with a "#general" channel,
+ * sample messages, and a valid invite code).
+ *
+ * Every public method includes a small artificial delay (50ms) to simulate
+ * async network behaviour.
+ *
+ * @see {@link docs/architecture.md#in-memory-database-inmemorydb} — full DB docs
+ */
+
 import type { ChannelDB } from "../models/db/ChannelDB";
 import type { MessageDB } from "../models/db/MessageDB";
 import type { ServerDB } from "../models/db/ServerDB";
@@ -7,23 +24,28 @@ import { eventBus, Events } from "./EventBus";
 // ---------------------------------------------------------------------------
 // Internal data shapes (widen the DB interfaces so we can track extra fields)
 // ---------------------------------------------------------------------------
+
+/** Stored user record with hashed password. */
 interface StoredUser {
   id: number;
   username: string;
   hash: string;
 }
 
+/** Stored server record. */
 interface StoredServer {
   server_id: number;
   server_name: string;
 }
 
+/** Stored channel record. */
 interface StoredChannel {
   channel_id: number;
   server_id: number;
   name: string;
 }
 
+/** Stored message record (without resolved author name). */
 interface StoredMessage {
   message_id: number;
   guild_id: number;
@@ -32,6 +54,7 @@ interface StoredMessage {
   message_text: string;
 }
 
+/** Stored membership join-table record. */
 interface StoredMember {
   user_id: number;
   server_id: number;
@@ -40,6 +63,8 @@ interface StoredMember {
 // ---------------------------------------------------------------------------
 // Persistence schema — shape of the JSON blob stored in localStorage
 // ---------------------------------------------------------------------------
+
+/** Full snapshot of the in-memory DB serialised to a plain object. */
 interface DBSnapshot {
   nextUserId: number;
   nextServerId: number;
@@ -56,6 +81,8 @@ interface DBSnapshot {
 
 const STORAGE_KEY = "rivulet_db";
 
+/** Attempts to load a {@link DBSnapshot} from localStorage. Returns `null` if
+ *  no snapshot exists or the stored data is corrupt. */
 function loadSnapshot(): DBSnapshot | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -67,6 +94,7 @@ function loadSnapshot(): DBSnapshot | null {
   }
 }
 
+/** Serialises and writes a {@link DBSnapshot} to localStorage. */
 function saveSnapshot(snapshot: DBSnapshot): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
@@ -78,6 +106,14 @@ function saveSnapshot(snapshot: DBSnapshot): void {
 // ---------------------------------------------------------------------------
 // Singleton
 // ---------------------------------------------------------------------------
+
+/**
+ * In-memory database singleton — the default dev backend.
+ *
+ * Wraps all data in private `Map` instances and exposes async methods that
+ * mirror the PostgreSQL API shape. The full state is persisted to localStorage
+ * after every write and restored on construction.
+ */
 class InMemoryDB {
   // -- counters ------------------------------------------------------------
   private nextUserId = 1;
@@ -97,7 +133,7 @@ class InMemoryDB {
   /** server_id → invite code */
   private serverInvites: Map<number, string> = new Map();
 
-  /** Generate a unique 8-char invite code */
+  /** Generate a unique 8-character invite code (no collision check). */
   private _generateInviteCode(): string {
     let code: string;
     do {
@@ -108,12 +144,13 @@ class InMemoryDB {
 
   // -- session -------------------------------------------------------------
   private currentUserId: number | null = null;
-  /** Set to true after _seedUser() completes (async crypto). */
+  /** Set to true after `_ensureSeeded()` completes (async crypto). */
   private seeded = false;
 
   // ------------------------------------------------------------------------
   // Constructor – try to restore from localStorage; seed defaults if empty.
   // ------------------------------------------------------------------------
+
   constructor() {
     const saved = loadSnapshot();
     if (saved) {
@@ -124,7 +161,7 @@ class InMemoryDB {
     this._persist();
   }
 
-  /** Hydrate all Maps from a persisted snapshot. */
+  /** Hydrate all Maps from a persisted {@link DBSnapshot}. */
   private _restore(snapshot: DBSnapshot): void {
     this.nextUserId = snapshot.nextUserId;
     this.nextServerId = snapshot.nextServerId;
@@ -150,7 +187,7 @@ class InMemoryDB {
     );
   }
 
-  /** Serialize all Maps into a plain-object snapshot for localStorage. */
+  /** Serialize all Maps into a plain-object {@link DBSnapshot} for localStorage. */
   private _snapshot(): DBSnapshot {
     return {
       nextUserId: this.nextUserId,
@@ -172,7 +209,7 @@ class InMemoryDB {
     saveSnapshot(this._snapshot());
   }
 
-  /** Data to seed when localStorage is empty (first visit). */
+  /** Seed initial data when localStorage is empty (first visit). */
   private _seedDefaults(): void {
     // Default server
     this.servers.set(1, { server_id: 1, server_name: "Rivulet HQ" });
@@ -216,13 +253,16 @@ class InMemoryDB {
   }
 
   // -- helpers -------------------------------------------------------------
+
+  /** Builds the composite key for the members map. */
   private _memberKey(userId: number, serverId: number): string {
     return `${userId}-${serverId}`;
   }
 
-  /** tiny artificial delay so calls still feel async */
+  /** Tiny artificial delay so calls still feel async (default 50ms). */
   private _delay = (ms = 50) => new Promise((r) => setTimeout(r, ms));
 
+  /** Asserts the user is authenticated and returns their user ID. */
   private _requireAuth(): number {
     if (this.currentUserId === null) {
       throw new Error("Not authenticated — login first.");
@@ -231,8 +271,8 @@ class InMemoryDB {
   }
 
   /**
-   * Mirrors LoginController.computeHash so the seed user's stored hash
-   * matches what the client sends.
+   * Mirrors {@link LoginController.computeHash} so the seeded user's stored
+   * hash matches what the client sends.
    */
   private async _computeHash(username: string, password: string): Promise<string> {
     const saltedPassword = username + password;
@@ -244,7 +284,7 @@ class InMemoryDB {
     return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
   }
 
-  /** Lazily create the dev user with a properly-hashed password. */
+  /** Lazily create the dev user (`dev` / `password`) with a properly-hashed password. */
   private async _ensureSeeded(): Promise<void> {
     if (this.seeded) return;
     this.seeded = true;
@@ -260,11 +300,16 @@ class InMemoryDB {
   // ------------------------------------------------------------------------
   // Account
   // ------------------------------------------------------------------------
-  /** Clear the current session — called on logout. Does not erase stored data. */
+
+  /** Clears the current session — called on logout. Does not erase stored data. */
   clearSession(): void {
     this.currentUserId = null;
   }
 
+  /**
+   * Authenticates a user by username and SHA-256 hash.
+   * Lazily seeds the dev user on first call.
+   */
   async login(username: string, hash: string): Promise<boolean> {
     await this._ensureSeeded();
     await this._delay();
@@ -277,6 +322,10 @@ class InMemoryDB {
     return false;
   }
 
+  /**
+   * Registers a new user with the given username and SHA-256 hash.
+   * Rejects duplicate usernames.
+   */
   async signup(username: string, hash: string): Promise<boolean> {
     await this._ensureSeeded();
     await this._delay();
@@ -294,6 +343,8 @@ class InMemoryDB {
   // ------------------------------------------------------------------------
   // User model
   // ------------------------------------------------------------------------
+
+  /** Returns the list of servers the current user belongs to. */
   async getUserModel(): Promise<{ servers: ServerDB[] }> {
     await this._delay();
     const userId = this._requireAuth();
@@ -310,6 +361,15 @@ class InMemoryDB {
   // ------------------------------------------------------------------------
   // Server
   // ------------------------------------------------------------------------
+
+  /**
+   * Creates a new server with the given name.
+   *
+   * The creator is automatically added as a member, an invite code is
+   * generated, and a `#general` channel is created.
+   *
+   * @returns An object containing the new server's ID.
+   */
   async createServer(serverName: string): Promise<{ created_server_id: number }> {
     await this._delay();
     const userId = this._requireAuth();
@@ -336,6 +396,9 @@ class InMemoryDB {
     return { created_server_id: serverId };
   }
 
+  /**
+   * Retrieves the invite code for a server. Generates one if it doesn't exist yet.
+   */
   async getInviteCode(serverId: number): Promise<{ invite_code: string }> {
     await this._delay();
     this._requireAuth();
@@ -350,6 +413,12 @@ class InMemoryDB {
     return { invite_code: code };
   }
 
+  /**
+   * Joins a server using an invite code. No-op if already a member.
+   *
+   * @returns `true` if the user joined (or already belonged), `false` if the
+   *          invite code is invalid.
+   */
   async joinServer(inviteCode: string): Promise<boolean> {
     await this._delay();
     const userId = this._requireAuth();
@@ -365,6 +434,7 @@ class InMemoryDB {
     return true;
   }
 
+  /** Removes the current user's membership from a server. */
   async leaveServer(serverId: number): Promise<void> {
     await this._delay();
     const userId = this._requireAuth();
@@ -375,6 +445,8 @@ class InMemoryDB {
   // ------------------------------------------------------------------------
   // Channel
   // ------------------------------------------------------------------------
+
+  /** Creates a new channel in the given server. */
   async createChannel(serverId: number, channelName: string): Promise<ChannelDB> {
     await this._delay();
     this._requireAuth();
@@ -389,6 +461,7 @@ class InMemoryDB {
     return { channel_id: channel.channel_id, server_id: channel.server_id, name: channel.name };
   }
 
+  /** Returns all channels in a given server. */
   async getChannels(serverId: number): Promise<{ channels: ChannelDB[] }> {
     await this._delay();
     this._requireAuth();
@@ -404,6 +477,8 @@ class InMemoryDB {
   // ------------------------------------------------------------------------
   // Members
   // ------------------------------------------------------------------------
+
+  /** Returns all members of a given server, resolving usernames from user records. */
   async getMembers(serverId: number): Promise<{ members: ServerMemberDB[] }> {
     await this._delay();
     this._requireAuth();
@@ -421,6 +496,11 @@ class InMemoryDB {
   // ------------------------------------------------------------------------
   // Messages
   // ------------------------------------------------------------------------
+
+  /**
+   * Stores a new message and emits a {@link Events.MessageCreated} event
+   * for real-time streaming.
+   */
   async createMessage(
     serverId: number,
     channelId: number,
@@ -458,6 +538,7 @@ class InMemoryDB {
     };
   }
 
+  /** Returns all messages in a given channel, resolving author names. */
   async getMessages(
     serverId: number,
     channelId: number,
@@ -486,14 +567,18 @@ class InMemoryDB {
 // ---------------------------------------------------------------------------
 // Export singleton instance
 // ---------------------------------------------------------------------------
+
+/** Singleton in-memory database instance. */
 export const inMemoryDB = new InMemoryDB();
 
 // ---------------------------------------------------------------------------
 // Clear all persisted data from localStorage (auth + db)
 // ---------------------------------------------------------------------------
+
 const STORAGE_USERNAME_KEY = 'rivulet_username';
 const STORAGE_HASH_KEY = 'rivulet_hash';
 
+/** Clears all persisted data from localStorage — both auth keys and the DB snapshot. */
 export function clearPersistence(): void {
     localStorage.removeItem(STORAGE_USERNAME_KEY);
     localStorage.removeItem(STORAGE_HASH_KEY);

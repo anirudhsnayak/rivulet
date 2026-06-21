@@ -1,6 +1,27 @@
+/**
+ * @file Login / signup API — dual-mode (in-memory vs PostgreSQL).
+ *
+ * Provides the {@link handleLogin} and {@link handleSignup} functions used
+ * by {@link LoginController} to authenticate users. Delegates to the
+ * in-memory DB or sends HTTP requests based on {@link API_MODE}.
+ *
+ * @see {@link LoginController} — orchestrator that calls these functions
+ * @see {@link docs/architecture.md#login-flow} — login flow docs
+ */
+
 import { API_MODE } from "./ApiConfig";
 import { inMemoryDB } from "./InMemoryDB";
 
+/**
+ * Authenticates a user with the given username and SHA-256 hash.
+ *
+ * In-memory mode: delegates to {@link InMemoryDB.login}.
+ * PostgreSQL mode: POST to `/api/account/login`.
+ *
+ * @param username - The user's display name.
+ * @param hash - SHA-256 hex digest of `username + password`.
+ * @returns `true` if the credentials are valid, `false` otherwise.
+ */
 export async function handleLogin(username: string, hash: string): Promise<boolean> {
     if (API_MODE === "in-memory") {
         const ok = await inMemoryDB.login(username, hash);
@@ -33,6 +54,16 @@ export async function handleLogin(username: string, hash: string): Promise<boole
     return false;
 }
 
+/**
+ * Registers a new user with the given username and SHA-256 hash.
+ *
+ * In-memory mode: delegates to {@link InMemoryDB.signup}.
+ * PostgreSQL mode: POST to `/api/account/signup`.
+ *
+ * @param username - The desired display name (must be unique).
+ * @param hash - SHA-256 hex digest of `username + password`.
+ * @returns `true` if signup succeeded, `false` if the username already exists.
+ */
 export async function handleSignup(username: string, hash: string): Promise<boolean> {
     if (API_MODE === "in-memory") {
         const ok = await inMemoryDB.signup(username, hash);

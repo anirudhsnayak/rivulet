@@ -1,3 +1,13 @@
+/**
+ * @file Server (guild) API — create, invite, leave.
+ *
+ * Dual-mode functions for server management. Each function delegates to
+ * {@link InMemoryDB} or sends HTTP requests based on {@link API_MODE}.
+ *
+ * @see {@link docs/architecture.md#space-creation-flow} — server creation flow
+ * @see {@link docs/architecture.md#sharing-an-invite-server-owner} — invite flow
+ */
+
 import { updateUserModel } from "./UserModelAPI";
 import { reloadChannels } from "./ChannelAPI";
 import { reloadMessages } from "./MessageAPI";
@@ -6,6 +16,19 @@ import { store } from "../stores/store";
 import { API_MODE } from "./ApiConfig";
 import { inMemoryDB } from "./InMemoryDB";
 
+/**
+ * Creates a new server with the given name.
+ *
+ * In-memory: delegates to {@link InMemoryDB.createServer}, then refreshes the
+ * user model and selects the new server's first channel.
+ * PostgreSQL: POST to `/api/server/`.
+ *
+ * @todo The post-creation orchestration (reloadChannels, dispatch, reloadMessages)
+ *       should not live in the API layer — refactor into the controller.
+ *
+ * @param serverParams - Object containing the server name.
+ * @param serverParams.spaceName - The display name for the new server.
+ */
 export async function createServer(serverParams: { spaceName: string }) {
     const serverName = serverParams.spaceName;
 
@@ -44,6 +67,15 @@ export async function createServer(serverParams: { spaceName: string }) {
     }
 }
 
+/**
+ * Retrieves the invite code for a given server.
+ *
+ * In-memory: delegates to {@link InMemoryDB.getInviteCode}.
+ * PostgreSQL: POST to `/api/server/invite`.
+ *
+ * @param serverId - The ID of the server to get an invite for.
+ * @returns The invite code string, or `undefined` on failure.
+ */
 export async function getInviteCode(serverId: number) {
     if (API_MODE === "in-memory") {
         const data = await inMemoryDB.getInviteCode(serverId);
@@ -70,6 +102,14 @@ export async function getInviteCode(serverId: number) {
     }
 }
 
+/**
+ * Removes the current user's membership from a server.
+ *
+ * In-memory: delegates to {@link InMemoryDB.leaveServer}.
+ * PostgreSQL: POST to `/api/server/leave`.
+ *
+ * @param serverId - The ID of the server to leave.
+ */
 export async function leaveServerAPI(serverId: number) {
     if (API_MODE === "in-memory") {
         await inMemoryDB.leaveServer(serverId);
