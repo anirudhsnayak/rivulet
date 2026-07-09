@@ -1,69 +1,147 @@
-# React + TypeScript + Vite
+# Rivulet
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A Discord-like chat application, with servers, channels, and real-time messaging in the browser.
 
-Currently, two official plugins are available:
+Rivulet is a React 19 single-page app built with Vite 7, Material UI 7, Redux Toolkit, and React Router 7. It runs entirely against an in-browser database by default, so you can clone it and start clicking around without setting up a backend.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- **Account creation and login** 
+- **Persistent login sessions**
+- **Multi-user Channels** 
+- **Live Messaging**
+- **Invites**
+- **Light/Dark theme** 
+## Tech stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+| Layer | Technology |
+|---|---|
+| Framework | React 19 |
+| Build tool | Vite 7 |
+| UI | Material UI 7 (`@mui/material`, `@mui/icons-material`, `@mui/lab`) |
+| State | Redux Toolkit + React Redux |
+| Routing | React Router 7 |
+| Language | TypeScript 5.8 (strict) |
+| Backend | In-memory DB or PostgreSQL via HTTP |
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Getting started
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+**Prerequisites:** Node.js `^20.19.0` or `>=22.12.0` (required by Vite 7).
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Then open the URL Vite prints (usually http://localhost:5173).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Dev credentials
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+The in-memory backend seeds a ready-to-use account on first visit:
+
+| Username | Password |
+|---|---|
+| `dev` | `password` |
+
+You'll land in a seeded server, **Rivulet HQ**, containing a `#general` channel and a few sample messages.
+
+To start fresh, clear the site's `localStorage` to drop the persisted database and re-seeds the defaults.
+
+## Scripts
+
+| Command | Description |
+|---|---|
+| `npm run dev` | Start the Vite dev server with HMR |
+| `npm run build` | Type-check with `tsc -b`, then produce a production build |
+| `npm run lint` | Run ESLint over all source files |
+| `npm run preview` | Serve the production build locally |
+
+## Project structure
+
 ```
+src/
+├── pages/          Route-level components (login, main app layout, invite)
+├── controllers/    Business logic — called by pages, call APIs + dispatch
+├── api/            Data access layer — dual-mode (in-memory vs PostgreSQL)
+├── stores/slices/  Redux Toolkit slices (UserSlice, RivuletSlice)
+├── models/         TypeScript interfaces
+│   ├── server-hierarchy/   Domain models (Guild, Channel, Message, …)
+│   ├── db/                 Database shapes (ServerDB, MessageDB, …)
+│   └── global/             Redux state shapes
+├── hooks/          useRestoreSession, useMessageStream
+├── components/     Shared presentational components
+└── theme/          MUI dark theme with custom palette extensions
+
+docs/               Architecture reference
+```
+
+## Architecture
+
+Data flows in one direction:
+
+```
+UI (pages/) → Controllers (controllers/) → API (api/) → Store (stores/) → UI
+```
+
+- **Pages** call controller functions on user interaction.
+- **Controllers** orchestrate: they call API functions, then dispatch Redux actions.
+- **API functions** read and write data in whichever backend is active.
+- **Store** is a single Redux store with two slices — `UserSlice` (servers, channels, messages, members, and the current selections) and `RivuletSlice` (app-level state like `loggedIn` and `creatingSpace`). Components subscribe via `useSelector`.
+
+Review [docs/architecture.md](docs/architecture.md) for further info.
+
+## Backend modes
+
+Every function in [src/api/](src/api/) is dual-mode, switched by a single constant in [ApiConfig.ts](src/api/ApiConfig.ts):
+
+```ts
+export const API_MODE: ApiMode = 'in-memory';  // or 'psql'
+```
+
+```ts
+if (API_MODE === 'psql') {
+  // fetch from http://localhost:3000/api/...
+} else {
+  // delegate to the InMemoryDB singleton
+}
+```
+
+**`in-memory`** (default) delegates to `InMemoryDB` — a singleton holding everything in `Map`s, with a 50 ms artificial delay to mimic network latency, persisted to `localStorage` under `rivulet_db` on every mutation. No backend required.
+
+**`psql`** sends HTTP requests to a PostgreSQL backend expected at `http://localhost:3000/api/*`. This backend is not part of this repository. Endpoints used:
+
+| Endpoint | Method | Purpose |
+|---|---|---|
+| `/api/account/login` | POST | Authenticate |
+| `/api/account/signup` | POST | Register |
+| `/api/user` | POST | Load the user's servers |
+| `/api/server/` | POST | Create a server |
+| `/api/server/invite` | POST | Fetch a server's invite code |
+| `/api/server/join` | POST | Join via invite |
+| `/api/server/leave` | POST | Leave a server |
+| `/api/channel/` | POST | Create a channel |
+| `/api/channel?serverId=` | GET | Channels in a server |
+| `/api/message/` | POST | Create a message |
+| `/api/message?serverId=&channelId=` | GET | Messages in a channel |
+| `/api/member?serverId=` | GET | Members of a server |
+
+All requests are sent with `credentials: "include"`.
+
+## Routing
+
+| Path | Component | Notes |
+|---|---|---|
+| `/` | → `/login` | Redirect |
+| `/login` | `Login` | Tabbed login / signup |
+| `/app` | `Rivulet` | Main workspace; requires auth |
+| `/invite/:inviteId` | `Invite` | Stores the invite code, then routes to login or the app |
+
+## Domain naming: Guild vs. Server
+
+The same concept is called **Guild** in the domain models and Redux state, and **Server** in the database shapes and API layer. This is a known inconsistency being phased out — **prefer "Server" for new code**. See [TODO.md](TODO.md).
+
+## Documentation
+
+- [docs/architecture.md](docs/architecture.md) — full flow reference: login, session restore, grid layout, invite flow, Redux store, in-memory DB internals
+- [TODO.md](TODO.md) — known technical debt and planned work
+- [CLAUDE.md](CLAUDE.md) — guidance for AI-assisted development on this repo
