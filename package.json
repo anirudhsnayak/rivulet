@@ -7,6 +7,8 @@
     "test": "node --experimental-strip-types --test server/*.test.ts",
     "dev": "vite",
     "dev:server": "npm --prefix ../rivulet-server run dev",
+    "dev:db": "npm --prefix ../rivulet-server run db:start",
+    "dev:db:migrate": "npm --prefix ../rivulet-server run db:migrate",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"

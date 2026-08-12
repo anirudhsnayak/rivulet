@@ -41,6 +41,13 @@ schema configured, run `npm run dev:server` from this directory. It starts the
 API using the backend's working directory and `.env`. Run `npm run dev` in a
 second terminal for the frontend.
 
+Start PostgreSQL first with `npm run dev:db` (Docker Desktop must be running).
+This starts the existing `rivulet-postgres` container or creates it using the
+backend's `.env` and the persistent `rivulet-data` volume, then waits for readiness.
+Stop the API and run `npm run dev:db:migrate` when setting up or upgrading the
+schema, then restart the API. This uses the backend's `.env`, preserves existing
+data, and upgrades legacy membership roles and invite-code columns.
+
 ### Dev credentials
 
 The in-memory backend seeds a ready-to-use account on first visit:
@@ -59,6 +66,8 @@ To start fresh, clear the site's `localStorage` to drop the persisted database a
 |---|---|
 | `npm run dev` | Start the Vite dev server with HMR |
 | `npm run dev:server` | Start the sibling rivulet-server API |
+| `npm run dev:db` | Start PostgreSQL in Docker and wait until ready |
+| `npm run dev:db:migrate` | Initialize or upgrade the PostgreSQL schema |
 | `npm run build` | Type-check with `tsc -b`, then produce a production build |
 | `npm run lint` | Run ESLint over all source files |
 | `npm run preview` | Serve the production build locally |
