@@ -15,6 +15,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import { Guild, Channel, Message, ServerMember } from '../../models/server-hierarchy';
 import type { UserState } from '../../models/global';
+import type { PresenceSnapshot } from '../../api/PresenceAPI';
 
 const initialState: UserState = {
   guilds: [],
@@ -23,12 +24,22 @@ const initialState: UserState = {
   visibleChannels: [],
   visibleMessages: [],
   visibleMembers: [],
+  presenceByServer: {},
 }
 
 export const UserSlice = createSlice({
   name: 'UserSlice',
   initialState,
   reducers: {
+    setPresence: (state, action: PayloadAction<PresenceSnapshot>) => {
+        state.presenceByServer = {};
+        for (const server of action.payload.servers) {
+            state.presenceByServer[server.serverId] = server.onlineUserIds;
+        }
+    },
+    clearPresence: (state) => {
+        state.presenceByServer = {};
+    },
     /**
      * Replaces the full guilds list and performs fallback selection logic:
      * - If the previously selected guild still exists in the new list, it is preserved.
@@ -145,7 +156,7 @@ export const {
     setGuilds, addGuild, removeGuild, setCurrentGuildById,
     setChannels, addChannel, removeChannel, setCurrentChannelById, setCurrentChannelToLast,
     setMessages, addMessage, removeMessage,
-    setMembers, clearUserState,
+    setMembers, clearUserState, setPresence, clearPresence,
 } = UserSlice.actions
 
 export default UserSlice.reducer

@@ -9,11 +9,12 @@ npm run dev       # Start Vite dev server (HMR)
 npm run build     # Type-check with tsc then production build
 npm run lint      # ESLint on all source files
 npm run preview   # Preview production build locally
+npm test          # SSE presence HTTP integration test (Node 22.18+ or 24)
 ```
 
 When using `cd`, you must always wrap the directory you want to go to in quotes (e.g. `cd "/c/Example Folder") instead of using backslash escapes.
 
-There is no test framework configured yet.
+Presence integration tests use the built-in Node.js test runner. There is no separate unit test framework configured.
 
 ## Architecture
 

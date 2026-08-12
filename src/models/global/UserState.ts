@@ -29,4 +29,6 @@ export interface UserState {
   visibleMessages: Message[];
   /** Members of the currently selected guild. */
   visibleMembers: ServerMember[];
+  /** Online user IDs by server; absent while presence is unavailable. */
+  presenceByServer: Record<number, number[]>;
 }

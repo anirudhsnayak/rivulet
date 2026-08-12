@@ -144,6 +144,10 @@ class InMemoryDB {
 
   // -- session -------------------------------------------------------------
   private currentUserId: number | null = null;
+  /** Local identity for the development presence stream. */
+  getCurrentUserId(): number | null {
+    return this.currentUserId;
+  }
   /** Set to true after `_ensureSeeded()` completes (async crypto). */
   private seeded = false;
 

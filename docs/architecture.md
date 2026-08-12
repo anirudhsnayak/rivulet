@@ -2,6 +2,9 @@
 
 ## Overview
 
+For user presence, the development SSE endpoint, and the production API contract,
+see [User presence over SSE](presence.md).
+
 Rivulet is a Discord-like chat single-page application — a React 19 SPA built with Vite 7, Material UI 7, Redux Toolkit, and React Router 7. This document covers the high-level logic flow from login through app usage, and explains where data is stored at each stage.
 
 ---

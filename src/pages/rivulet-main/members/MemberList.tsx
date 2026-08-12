@@ -10,6 +10,7 @@
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../stores/store';
 import Box from '@mui/material/Box';
+import Tooltip from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 
 /** A single member row with optional selection highlight. */
@@ -36,7 +37,7 @@ const MemberListHeader = styled(Box)(({ theme }) => ({
     boxSizing: 'border-box',
     padding: '0.5rem 0.75rem',
     display: 'flex',
-    flexDirection: 'row' as 'row',
+    flexDirection: 'row' as const,
     color: theme.palette.text.disabled,
     fontSize: '0.75rem',
     fontWeight: 600,
@@ -51,16 +52,31 @@ const MemberListHeader = styled(Box)(({ theme }) => ({
  */
 export function MemberList() {
     const members = useSelector((state: RootState) => state.UserSlice.visibleMembers);
+    const onlineUserIds = useSelector((state: RootState) =>
+        state.UserSlice.presenceByServer[state.UserSlice.currentGuildId]);
+    const online = new Set(onlineUserIds);
+    const onlineCount = members.filter((member) => online.has(member.memberUserId)).length;
     return (
         <>
             <MemberListHeader>
-                <span>Members &ndash; {members.length}</span>
+                <span>Members &ndash; {members.length}<br />
+                    {onlineUserIds ? `${onlineCount} online` : 'Presence unavailable'}
+                </span>
             </MemberListHeader>
-            {Array.from({ length: members.length }, (_, index) => (
-                <MemberEntry key={index}>
-                    {members[index].memberName}
-                </MemberEntry>
-            ))}
+            {members.map((member) => {
+                const status = !onlineUserIds ? 'Unknown' : online.has(member.memberUserId) ? 'Online' : 'Offline';
+                return (
+                    <MemberEntry key={member.memberUserId} sx={{ alignItems: 'center', gap: 1 }}>
+                        <Tooltip title={status}>
+                            <Box component="span" role="img" aria-label={`${member.memberName}: ${status}`}
+                                sx={{ width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
+                                    bgcolor: status === 'Online' ? 'success.main' : 'text.disabled',
+                                    opacity: status === 'Unknown' ? 0.4 : 1 }} />
+                        </Tooltip>
+                        {member.memberName}
+                    </MemberEntry>
+                );
+            })}
         </>
 
     );

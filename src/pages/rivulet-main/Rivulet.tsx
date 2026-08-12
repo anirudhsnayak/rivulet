@@ -25,6 +25,7 @@ import { MemberList } from './members/MemberList';
 import { UserInfo } from './user-info/UserInfo';
 import { store } from '../../stores/store';
 import { switchToServer } from '../../controllers/rivulet-main/ServerController';
+import { usePresenceStream } from '../../hooks/usePresenceStream';
 
 /**
  * Main application layout — the primary workspace after login.
@@ -43,6 +44,7 @@ import { switchToServer } from '../../controllers/rivulet-main/ServerController'
  * Overlays (col 1 / -1): {@link SpaceCreationModal}, {@link InviteReceivedModal}
  */
 function Rivulet() {
+    usePresenceStream();
     useEffect(() => {
         updateUserModel().then(() => {
             const guildId = store.getState().UserSlice.currentGuildId;
