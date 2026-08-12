@@ -19,7 +19,8 @@ import type { ChannelDB } from "../models/db/ChannelDB";
 import type { MessageDB } from "../models/db/MessageDB";
 import type { ServerDB } from "../models/db/ServerDB";
 import type { ServerMemberDB } from "../models/db/ServerMemberDB";
-import { eventBus, Events } from "./EventBus";
+import { eventBus, Events } from "./EventBus.ts";
+import { canManageServer, type ServerRole } from "../models/server-hierarchy/ServerRole.ts";
 
 // ---------------------------------------------------------------------------
 // Internal data shapes (widen the DB interfaces so we can track extra fields)
@@ -56,6 +57,7 @@ interface StoredMessage {
 
 /** Stored membership join-table record. */
 interface StoredMember {
+  role: ServerRole;
   user_id: number;
   server_id: number;
 }
@@ -114,7 +116,7 @@ function saveSnapshot(snapshot: DBSnapshot): void {
  * mirror the PostgreSQL API shape. The full state is persisted to localStorage
  * after every write and restored on construction.
  */
-class InMemoryDB {
+export class InMemoryDB {
   // -- counters ------------------------------------------------------------
   private nextUserId = 1;
   private nextServerId = 1;
@@ -185,6 +187,12 @@ class InMemoryDB {
       Object.entries(snapshot.messages).map(([k, v]) => [Number(k), v]),
     );
     this.members = new Map(Object.entries(snapshot.members));
+    // Old snapshots have no ownership data. Preserve the earliest member as owner.
+    for (const server of this.servers.values()) {
+      const members = [...this.members.values()].filter(m => m.server_id === server.server_id);
+      for (const member of members) member.role ??= 'member';
+      if (members.length && !members.some(m => m.role === 'creator')) members[0].role = 'creator';
+    }
     this.invites = new Map(Object.entries(snapshot.invites));
     this.serverInvites = new Map(
       Object.entries(snapshot.serverInvites).map(([k, v]) => [Number(k), v]),
@@ -224,7 +232,7 @@ class InMemoryDB {
     this.nextChannelId = 2;
 
     // Dev user (id 1) is a member of Rivulet HQ
-    this.members.set("1-1", { user_id: 1, server_id: 1 });
+    this.members.set("1-1", { user_id: 1, server_id: 1, role: 'creator' });
 
     // Default invite for Rivulet HQ
     const defaultInvite = this._generateInviteCode();
@@ -261,6 +269,25 @@ class InMemoryDB {
   /** Builds the composite key for the members map. */
   private _memberKey(userId: number, serverId: number): string {
     return `${userId}-${serverId}`;
+  }
+
+  private _requireMember(serverId: number): StoredMember {
+    const userId = this._requireAuth();
+    const member = this.members.get(this._memberKey(userId, serverId));
+    if (!member) throw new Error("You are not a member of this server.");
+    return member;
+  }
+
+  private _requireAdmin(serverId: number): StoredMember {
+    const member = this._requireMember(serverId);
+    if (!canManageServer(member.role)) throw new Error("Only admins can manage this server.");
+    return member;
+  }
+
+  private _requireChannel(serverId: number, channelId: number): void {
+    if (this.channels.get(channelId)?.server_id !== serverId) {
+      throw new Error("Channel does not belong to this server.");
+    }
   }
 
   /** Tiny artificial delay so calls still feel async (default 50ms). */
@@ -356,7 +383,7 @@ class InMemoryDB {
     for (const m of this.members.values()) {
       if (m.user_id === userId) {
         const s = this.servers.get(m.server_id);
-        if (s) servers.push({ server_id: s.server_id, server_name: s.server_name });
+        if (s) servers.push({ server_id: s.server_id, server_name: s.server_name, role: m.role });
       }
     }
     return { servers };
@@ -383,6 +410,7 @@ class InMemoryDB {
     this.members.set(this._memberKey(userId, serverId), {
       user_id: userId,
       server_id: serverId,
+      role: 'creator',
     });
     // Generate a unique invite code for this server
     const inviteCode = this._generateInviteCode();
@@ -405,7 +433,7 @@ class InMemoryDB {
    */
   async getInviteCode(serverId: number): Promise<{ invite_code: string }> {
     await this._delay();
-    this._requireAuth();
+    this._requireMember(serverId);
     const existingCode = this.serverInvites.get(serverId);
     if (existingCode) return { invite_code: existingCode };
     // If no code exists yet (shouldn't happen for servers created normally),
@@ -433,16 +461,39 @@ class InMemoryDB {
     this.members.set(this._memberKey(userId, serverId), {
       user_id: userId,
       server_id: serverId,
+      role: 'member',
     });
     this._persist();
     return true;
   }
 
   /** Removes the current user's membership from a server. */
-  async leaveServer(serverId: number): Promise<void> {
+  async leaveServer(serverId: number, successorUserId?: number): Promise<void> {
     await this._delay();
-    const userId = this._requireAuth();
+    const member = this._requireMember(serverId);
+    const userId = member.user_id;
+    if (member.role === 'creator') {
+      this._transferOwnership(serverId, successorUserId ?? -1);
+    }
     this.members.delete(this._memberKey(userId, serverId));
+    this._persist();
+  }
+
+  private _transferOwnership(serverId: number, successorUserId: number): void {
+    const owner = this._requireMember(serverId);
+    if (owner.role !== 'creator') throw new Error("Only the creator can transfer ownership.");
+    const successor = this.members.get(this._memberKey(successorUserId, serverId));
+    if (!successor || successor.user_id === owner.user_id) {
+      throw new Error("Choose another server member as the successor owner.");
+    }
+    successor.role = 'creator';
+    owner.role = 'admin';
+  }
+
+  /** Transfers ownership without removing the previous owner's membership. */
+  async transferOwnership(serverId: number, successorUserId: number): Promise<void> {
+    await this._delay();
+    this._transferOwnership(serverId, successorUserId);
     this._persist();
   }
 
@@ -453,7 +504,7 @@ class InMemoryDB {
   /** Creates a new channel in the given server. */
   async createChannel(serverId: number, channelName: string): Promise<ChannelDB> {
     await this._delay();
-    this._requireAuth();
+    this._requireAdmin(serverId);
     const channelId = this.nextChannelId++;
     const channel: StoredChannel = {
       channel_id: channelId,
@@ -465,10 +516,42 @@ class InMemoryDB {
     return { channel_id: channel.channel_id, server_id: channel.server_id, name: channel.name };
   }
 
+  async deleteChannel(serverId: number, channelId: number): Promise<void> {
+    await this._delay();
+    this._requireAdmin(serverId);
+    this._requireChannel(serverId, channelId);
+    this.channels.delete(channelId);
+    for (const [id, message] of this.messages) {
+      if (message.guild_id === serverId && message.channel_id === channelId) this.messages.delete(id);
+    }
+    this._persist();
+  }
+
+  async setMemberRole(serverId: number, userId: number, role: 'member' | 'admin'): Promise<void> {
+    await this._delay();
+    if (this._requireMember(serverId).role !== 'creator') throw new Error("Only the creator can change admins.");
+    if (role !== 'member' && role !== 'admin') throw new Error("Invalid role.");
+    const member = this.members.get(this._memberKey(userId, serverId));
+    if (!member || member.role === 'creator') throw new Error("Cannot change this member's role.");
+    member.role = role;
+    this._persist();
+  }
+
+  async kickMember(serverId: number, userId: number): Promise<void> {
+    await this._delay();
+    const actor = this._requireAdmin(serverId);
+    const member = this.members.get(this._memberKey(userId, serverId));
+    if (!member || member.role === 'creator' || actor.user_id === userId) {
+      throw new Error("Cannot kick the creator or yourself.");
+    }
+    this.members.delete(this._memberKey(userId, serverId));
+    this._persist();
+  }
+
   /** Returns all channels in a given server. */
   async getChannels(serverId: number): Promise<{ channels: ChannelDB[] }> {
     await this._delay();
-    this._requireAuth();
+    this._requireMember(serverId);
     const channels: ChannelDB[] = [];
     for (const c of this.channels.values()) {
       if (c.server_id === serverId) {
@@ -485,13 +568,13 @@ class InMemoryDB {
   /** Returns all members of a given server, resolving usernames from user records. */
   async getMembers(serverId: number): Promise<{ members: ServerMemberDB[] }> {
     await this._delay();
-    this._requireAuth();
+    this._requireMember(serverId);
     const members: ServerMemberDB[] = [];
     for (const m of this.members.values()) {
       if (m.server_id === serverId) {
         const user = this.users.get(m.user_id);
         const username = user ? user.username : `user-${m.user_id}`;
-        members.push({ user_id: m.user_id, server_id: m.server_id, username });
+        members.push({ user_id: m.user_id, server_id: m.server_id, username, role: m.role });
       }
     }
     return { members };
@@ -511,7 +594,8 @@ class InMemoryDB {
     messageText: string,
   ): Promise<MessageDB> {
     await this._delay();
-    const userId = this._requireAuth();
+    const userId = this._requireMember(serverId).user_id;
+    this._requireChannel(serverId, channelId);
     const user = this.users.get(userId);
     const authorName = user ? user.username : `user-${userId}`;
     const messageId = this.nextMessageId++;
@@ -548,7 +632,8 @@ class InMemoryDB {
     channelId: number,
   ): Promise<{ messages: MessageDB[] }> {
     await this._delay();
-    this._requireAuth();
+    this._requireMember(serverId);
+    this._requireChannel(serverId, channelId);
     const messages: MessageDB[] = [];
     for (const m of this.messages.values()) {
       if (m.guild_id === serverId && m.channel_id === channelId) {

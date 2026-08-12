@@ -1,3 +1,5 @@
+import type { ServerRole } from "../server-hierarchy/ServerRole";
+
 /**
  * DB-layer shape for a server record.
  *
@@ -10,6 +12,7 @@
  * @see {@link InMemoryDB} — stores data as this shape
  */
 export interface ServerDB {
+    role: ServerRole;
     /** Unique server identifier. */
     server_id: number;
     /** Display name of the server. */

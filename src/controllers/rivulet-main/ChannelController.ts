@@ -18,6 +18,9 @@ import { reloadMessages } from '../../api/MessageAPI';
  * Opens the channel creation modal by setting the Redux creation state.
  */
 export function openChannelCreationModal(){
+    const state = store.getState();
+    const server = state.UserSlice.guilds.find(g => g.guildId === state.UserSlice.currentGuildId);
+    if (server?.role !== 'creator' && server?.role !== 'admin') return;
     store.dispatch(setCreatingSpace(SpaceCreationState.CreatingChannel));
 }
 

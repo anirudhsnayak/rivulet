@@ -61,7 +61,7 @@ export async function reloadMembers() {
     const latestGuildId = store.getState().UserSlice.currentGuildId;
     if (latestGuildId !== currentGuildId) return;
     const updatedMembers = members.map((member: ServerMemberDB) => {
-        return ServerMember(member.user_id, member.username, member.server_id);
+        return ServerMember(member.user_id, member.username, member.server_id, member.role);
     });
     store.dispatch(setMembers(updatedMembers));
 }

@@ -1,3 +1,5 @@
+import type { ServerRole } from "./ServerRole";
+
 /**
  * Represents a member of a server ("guild") in the Redux store and UI layer.
  *
@@ -8,6 +10,7 @@
  * @see {@link docs/architecture.md#domain-models} — domain model overview
  */
 export interface ServerMember {
+    role: ServerRole;
     /** The user's unique identifier. */
     memberUserId: number;
     /** Display name of the member. */
@@ -24,8 +27,9 @@ export interface ServerMember {
  * @param parentGuildId - The guild this member belongs to.
  * @returns A plain object conforming to the {@link ServerMember} interface.
  */
-export function ServerMember(memberUserId: number, memberName: string, parentGuildId: number): ServerMember {
+export function ServerMember(memberUserId: number, memberName: string, parentGuildId: number, role: ServerRole = "member"): ServerMember {
     return {
+        role,
         memberUserId,
         memberName,
         parentGuildId

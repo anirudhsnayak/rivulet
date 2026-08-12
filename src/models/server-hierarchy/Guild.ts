@@ -1,3 +1,5 @@
+import type { ServerRole } from "./ServerRole";
+
 /**
  * Represents a server ("guild") in the Redux store and UI layer.
  *
@@ -10,6 +12,7 @@
  * @see {@link docs/architecture.md#domain-models} — domain model overview
  */
 export interface Guild {
+    role: ServerRole;
     /** Unique server identifier. */
     guildId: number;
     /** Display name of the server. */
@@ -23,8 +26,9 @@ export interface Guild {
  * @param guildName - Display name of the server.
  * @returns A plain object conforming to the {@link Guild} interface.
  */
-export function Guild(guildId: number, guildName: string): Guild {
+export function Guild(guildId: number, guildName: string, role: ServerRole = "member"): Guild {
     return {
+        role,
         guildId,
         guildName
     };

@@ -15,6 +15,7 @@ import { setCurrentGuildById, setCurrentChannelToLast } from "../stores/slices/U
 import { store } from "../stores/store";
 import { API_MODE } from "./ApiConfig";
 import { inMemoryDB } from "./InMemoryDB";
+import { reloadMembers } from "./MemberAPI";
 
 /**
  * Creates a new server with the given name.
@@ -38,6 +39,7 @@ export async function createServer(serverParams: { spaceName: string }) {
         await updateUserModel();
         store.dispatch(setCurrentGuildById(data.created_server_id));
         await reloadChannels();
+        await reloadMembers();
         store.dispatch(setCurrentChannelToLast());
         await reloadMessages();
         return;
@@ -60,6 +62,7 @@ export async function createServer(serverParams: { spaceName: string }) {
         await updateUserModel(); // TODO: we already have this information in data
         store.dispatch(setCurrentGuildById(data.created_server_id));
         await reloadChannels();
+        await reloadMembers();
         store.dispatch(setCurrentChannelToLast());
         await reloadMessages();
     } else {
@@ -110,9 +113,9 @@ export async function getInviteCode(serverId: number) {
  *
  * @param serverId - The ID of the server to leave.
  */
-export async function leaveServerAPI(serverId: number) {
+export async function leaveServerAPI(serverId: number, successorUserId?: number) {
     if (API_MODE === "in-memory") {
-        await inMemoryDB.leaveServer(serverId);
+        await inMemoryDB.leaveServer(serverId, successorUserId);
         console.log("Left server (in-memory):", serverId);
         return;
     }
@@ -123,12 +126,12 @@ export async function leaveServerAPI(serverId: number) {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ serverId }),
+        body: JSON.stringify({ serverId, successorUserId }),
     });
 
     if (response.ok) {
         console.log("Left server successfully:", serverId);
     } else {
-        console.error("Failed to leave server:", response.statusText);
+        throw new Error("Failed to leave server. Please try again.");
     }
 }

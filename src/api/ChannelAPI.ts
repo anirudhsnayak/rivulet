@@ -47,7 +47,7 @@ export async function createChannel(serverId: number, channelName: string) {
         console.log("Channel creation successful:", data);
         return data;
     } else {
-        console.error("Channel creation failed:", response.statusText);
+        throw new Error("Could not create channel. Check your permissions and try again.");
     }
 }
 

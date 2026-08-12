@@ -50,7 +50,7 @@ export async function switchToServer(guildId: number) {
         Channel(c.server_id, c.channel_id, c.name),
     );
     const members = (rawMembers ?? []).map((m: ServerMemberDB) =>
-        ServerMember(m.user_id, m.username, m.server_id),
+        ServerMember(m.user_id, m.username, m.server_id, m.role),
     );
 
     const firstChannelId = channels.length > 0 ? channels[0].channelId : -1;
@@ -77,7 +77,9 @@ export async function switchToServer(guildId: number) {
  *
  * @param guildId - The ID of the guild to leave.
  */
-export async function leaveServer(guildId: number) {
-    await leaveServerAPI(guildId);
+export async function leaveServer(guildId: number, successorUserId?: number) {
+    await leaveServerAPI(guildId, successorUserId);
     await updateUserModel();
+    const nextId = store.getState().UserSlice.currentGuildId;
+    if (nextId !== -1) await switchToServer(nextId);
 }

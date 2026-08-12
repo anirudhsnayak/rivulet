@@ -21,7 +21,10 @@ import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Logout from '@mui/icons-material/Logout';
 import { InviteModal } from './InviteModal';
-import { leaveServer } from '../../../controllers/rivulet-main/ServerController';
+import Settings from '@mui/icons-material/Settings';
+import { useServerPermissions } from '../../../hooks/useServerPermissions';
+import { ServerSettingsDialog } from './ServerSettingsDialog';
+import { LeaveServerDialog } from './LeaveServerDialog';
 
 /** Container for the server info block with a bottom divider. */
 const ServerInfoContainer = styled(Box)(({ theme }) => ({
@@ -95,7 +98,9 @@ export function ServerInfo() {
     const serverName = currentGuild?.guildName ?? 'No Server';
     const [inviteModalOpen, setInviteModalOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-    const menuOpen = Boolean(anchorEl);
+    const menuOpen = Boolean(anchorEl) && currentGuildId !== -1;
+    const { isCreator } = useServerPermissions();
+    const [dialog, setDialog] = useState<{ kind: 'settings' | 'leave'; serverId: number } | null>(null);
 
     const handleNameClick = (e: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(e.currentTarget);
@@ -108,7 +113,7 @@ export function ServerInfo() {
     const handleLeaveServer = () => {
         handleMenuClose();
         if (currentGuildId !== -1) {
-            leaveServer(currentGuildId);
+            setDialog({ kind: 'leave', serverId: currentGuildId });
         }
     };
 
@@ -131,15 +136,22 @@ export function ServerInfo() {
                     horizontal: 'center',
                 }}
             >
+                {isCreator && <MenuItem dense onClick={() => { handleMenuClose(); setDialog({ kind: 'settings', serverId: currentGuildId }); }}>
+                    <Settings sx={{ fontSize: '1rem', mr: 0.75 }} />Server Settings
+                </MenuItem>}
                 <MenuItem onClick={handleLeaveServer} dense>
                     <Logout sx={{ fontSize: '1rem', mr: 0.75 }} />
                     Leave Server
                 </MenuItem>
             </Menu>
-            <InviteButton onClick={() => setInviteModalOpen(true)}>
+            <InviteButton disabled={currentGuildId === -1} onClick={() => setInviteModalOpen(true)}>
                 Invite People
                 <PersonAdd sx={{ fontSize: '0.9rem' }} />
             </InviteButton>
+            {dialog?.serverId === currentGuildId && dialog.kind === 'settings' && isCreator &&
+                <ServerSettingsDialog key={currentGuildId} serverId={currentGuildId} onClose={() => setDialog(null)} />}
+            {dialog?.serverId === currentGuildId && dialog.kind === 'leave' &&
+                <LeaveServerDialog key={currentGuildId} serverId={currentGuildId} isCreator={isCreator} onClose={() => setDialog(null)} />}
             <InviteModal open={inviteModalOpen} onClose={() => setInviteModalOpen(false)} />
         </ServerInfoContainer>
     );

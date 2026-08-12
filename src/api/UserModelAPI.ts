@@ -105,7 +105,7 @@ async function updateUserModel() {
     const userModel = await requestUserModel();
     if (!userModel) return;
     userModel.servers = userModel.servers.map((server: ServerDB) => {
-        return Guild(server.server_id, server.server_name);
+        return Guild(server.server_id, server.server_name, server.role);
     });
     store.dispatch(setGuilds(userModel.servers));
 

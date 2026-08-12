@@ -18,6 +18,13 @@ import MenuItem from '@mui/material/MenuItem';
 import { styled } from '@mui/material/styles';
 import { openChannelCreationModal, selectChannel } from '../../../controllers/rivulet-main/ChannelController';
 import { useState } from 'react';
+import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import DeleteOutline from '@mui/icons-material/DeleteOutline';
+import { useServerPermissions } from '../../../hooks/useServerPermissions';
+import { deleteChannel } from '../../../api/ServerManagementAPI';
+import { reloadChannels } from '../../../api/ChannelAPI';
+import { reloadMessages } from '../../../api/MessageAPI';
+import type { Channel } from '../../../models/server-hierarchy/Channel';
 
 /**
  * A single channel row — highlighted when selected, clickable to switch.
@@ -41,7 +48,7 @@ const ChannelRow = styled(Box)<{ selected?: boolean }>(({ selected, theme }) => 
 /** Outer container — full height, overflow hidden. */
 const ChannelListContainerStyle = {
     display: 'flex',
-    flexDirection: 'column' as 'column',
+    flexDirection: 'column' as const,
     width: '100%',
     height: '100%',
     alignItems: 'center',
@@ -55,7 +62,7 @@ const ChannelListHeader = styled(Box)(({ theme }) => ({
     boxSizing: 'border-box',
     padding: '0.5rem 0.75rem',
     display: 'flex',
-    flexDirection: 'row' as 'row',
+    flexDirection: 'row' as const,
     alignItems: 'center',
     justifyContent: 'space-between',
     color: theme.palette.text.disabled,
@@ -90,11 +97,11 @@ const AddButton = styled('button')(({ theme }) => ({
 const ChannelListStyle = {
     width: '100%',
     display: 'flex',
-    flexDirection: 'column' as 'column',
+    flexDirection: 'column' as const,
     justifyContent: 'flex-start',
     flexGrow: 1,
-    overflowY: 'auto' as 'auto',
-    overflowX: 'hidden' as 'hidden',
+    overflowY: 'auto' as const,
+    overflowX: 'hidden' as const,
 }
 
 /**
@@ -106,18 +113,40 @@ const ChannelListStyle = {
  * {@link openChannelCreationModal}.
  */
 export function ChannelList() {
+    const { isAdmin } = useServerPermissions();
+    const serverId = useSelector((state: RootState) => state.UserSlice.currentGuildId);
+    const [deleting, setDeleting] = useState<Channel | null>(null);
+    const [busy, setBusy] = useState(false);
+    const [error, setError] = useState('');
+    async function confirmDelete() {
+        if (!deleting) return;
+        setBusy(true);
+        setError('');
+        try {
+            await deleteChannel(deleting.parentGuildId, deleting.channelId);
+            await reloadChannels();
+            await reloadMessages();
+            setDeleting(null);
+        } catch (err) { setError(err instanceof Error ? err.message : 'Could not delete channel.'); }
+        finally { setBusy(false); }
+    }
     const channels = useSelector((state: RootState) => state.UserSlice.visibleChannels);
     const selectedChannel = useSelector((state: RootState) => state.UserSlice.currentChannelId);
 
-    const [contextMenu, setContextMenu] = useState<{ mouseX: number; mouseY: number } | null>(null);
+    const [contextMenu, setContextMenu] = useState<{ mouseX: number; mouseY: number; serverId: number; channel?: Channel } | null>(null);
+    const [contextMenuOpen, setContextMenuOpen] = useState(false);
 
-    const handleContextMenu = (event: React.MouseEvent) => {
+    const handleContextMenu = (event: React.MouseEvent, channel?: Channel) => {
+        if (!isAdmin) return;
         event.preventDefault();
-        setContextMenu({ mouseX: event.clientX, mouseY: event.clientY });
+        event.stopPropagation();
+        setContextMenu({ mouseX: event.clientX, mouseY: event.clientY, serverId, channel });
+        setContextMenuOpen(true);
     };
 
     const handleCloseContextMenu = () => {
-        setContextMenu(null);
+        // Keep the target and position stable throughout the closing animation.
+        setContextMenuOpen(false);
     };
 
     const handleAddChannel = () => {
@@ -129,20 +158,21 @@ export function ChannelList() {
         <div style={ChannelListContainerStyle}>
             <ChannelListHeader>
                 <span># Channels</span>
-                <AddButton onClick={openChannelCreationModal}>+</AddButton>
+                {isAdmin && <AddButton aria-label="Create channel" onClick={openChannelCreationModal}>+</AddButton>}
             </ChannelListHeader>
-            <div style={ChannelListStyle} onContextMenu={handleContextMenu}>
+            <div style={ChannelListStyle} onContextMenu={event => handleContextMenu(event)}>
                 {Array.from({ length: channels.length }, (_, index) => (
                     <ChannelRow
-                        key={index}
+                        key={channels[index].channelId}
                         selected={selectedChannel === channels[index].channelId}
                         onClick={() => selectChannel(channels[index].channelId)}
+                        onContextMenu={event => handleContextMenu(event, channels[index])}
                     >
-                            # {channels[index].channelName}
+                            <Box component="span" sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}># {channels[index].channelName}</Box>
                     </ChannelRow>
                 ))}
                 <Menu
-                    open={contextMenu !== null}
+                    open={contextMenuOpen && isAdmin && contextMenu?.serverId === serverId}
                     onClose={handleCloseContextMenu}
                     anchorReference="anchorPosition"
                     anchorPosition={
@@ -151,9 +181,27 @@ export function ChannelList() {
                             : undefined
                     }
                 >
-                    <MenuItem onClick={handleAddChannel}>Add Channel</MenuItem>
+                    {!contextMenu?.channel && <MenuItem onClick={handleAddChannel}>Add Channel</MenuItem>}
+                    {contextMenu?.channel && <MenuItem sx={{ color: 'error.main' }} onClick={() => {
+                        setError('');
+                        setDeleting(contextMenu.channel ?? null);
+                        handleCloseContextMenu();
+                    }}>
+                        <DeleteOutline sx={{ fontSize: '1rem', mr: 1 }} />Delete Channel
+                    </MenuItem>}
                 </Menu>
             </div>
+            <Dialog open={!!deleting && deleting.parentGuildId === serverId && isAdmin} onClose={busy ? undefined : () => setDeleting(null)}>
+                <DialogTitle>Delete #{deleting?.channelName}?</DialogTitle>
+                <DialogContent>
+                    This permanently deletes the channel and its messages.
+                    {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+                </DialogContent>
+                <DialogActions>
+                    <Button disabled={busy} onClick={() => setDeleting(null)}>Cancel</Button>
+                    <Button color="error" disabled={busy} onClick={() => void confirmDelete()}>Delete Channel</Button>
+                </DialogActions>
+            </Dialog>
         </div>
 
     );

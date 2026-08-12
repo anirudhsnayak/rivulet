@@ -16,6 +16,9 @@ import { RivuletTextField } from "../../../components/RivuletTextField";
 import { createMessage } from "../../../api/MessageAPI";
 import { store } from "../../../stores/store";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { Alert } from "@mui/material";
+import type { RootState } from "../../../stores/store";
 
 
 /**
@@ -25,8 +28,8 @@ import { useState } from "react";
  */
 //TODO: lift up state here for cleaner code
 async function handleMessageSend(message: string) {
-    let currentGuildId = store.getState().UserSlice.currentGuildId;
-    let currentChannelId = store.getState().UserSlice.currentChannelId;
+    const currentGuildId = store.getState().UserSlice.currentGuildId;
+    const currentChannelId = store.getState().UserSlice.currentChannelId;
     await createMessage(currentGuildId, currentChannelId, message);
 }
 
@@ -39,16 +42,26 @@ async function handleMessageSend(message: string) {
  */
 export function MessageField() {
     const [message, setMessage] = useState("");
+    const [error, setError] = useState('');
+    const [busy, setBusy] = useState(false);
+    const channelId = useSelector((state: RootState) => state.UserSlice.currentChannelId);
 
-    async function keyPressHandler(e: any) {
-        if (e.key !== 'Enter') return;
-        await handleMessageSend(e.target.value);
-        setMessage("");
+    async function keyPressHandler(e: React.KeyboardEvent<HTMLInputElement>) {
+        if (e.key !== 'Enter' || busy || channelId === -1 || !message.trim()) return;
+        setBusy(true);
+        setError('');
+        try {
+            await handleMessageSend(message);
+            setMessage("");
+        } catch (err) { setError(err instanceof Error ? err.message : 'Could not send message.'); }
+        finally { setBusy(false); }
     }
 
     return (
         <>
+            {error && <Alert severity="error">{error}</Alert>}
             <RivuletTextField
+                disabled={channelId === -1 || busy}
                 value={message}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)}
                 label="Type a message..."

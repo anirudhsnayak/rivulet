@@ -22,10 +22,11 @@ import { setCreatingSpace } from '../../../stores/slices/RivuletSlice';
 import { RivuletTextField } from '../../../components/RivuletTextField';
 import { handleSpaceCreation } from '../../../controllers/rivulet-main/SpaceCreationController';
 import { useState } from 'react';
+import Alert from '@mui/material/Alert';
 
 /** Centered modal card styling with generous padding. */
 const style = {
-    position: 'absolute' as 'absolute',
+    position: 'absolute' as const,
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
@@ -50,16 +51,23 @@ export function SpaceCreationModal() {
     );
     const dispatch = useDispatch();
     const [spaceName, setSpaceName] = useState('');
+    const [error, setError] = useState('');
+    const [busy, setBusy] = useState(false);
 
     const handleCreateClick = async (guildId: number) => {
         const spaceParams = {
             guildId: guildId,
             spaceName: spaceName,
         };
-        if (spaceName.trim()) {
-            await handleSpaceCreation(creatingSpace, spaceParams, dispatch);
-            setSpaceName('');
-            dispatch(setCreatingSpace(SpaceCreationState.NotCreatingSpace));
+        if (spaceName.trim() && !busy) {
+            setBusy(true);
+            setError('');
+            try {
+                await handleSpaceCreation(creatingSpace, spaceParams, dispatch);
+                setSpaceName('');
+                dispatch(setCreatingSpace(SpaceCreationState.NotCreatingSpace));
+            } catch (err) { setError(err instanceof Error ? err.message : 'Could not create space.'); }
+            finally { setBusy(false); }
         }
     };
     const spaceType = (creatingSpace === SpaceCreationState.CreatingServer ? "Server" : "Channel");
@@ -75,12 +83,13 @@ export function SpaceCreationModal() {
             Create a New {spaceType}
             </Typography>
 
+            {error && <Alert severity="error">{error}</Alert>}
             {/* Server Name */}
             <RivuletTextField
                 label = {`${spaceType} Name`}
                 sx={{ width: '100%' }}
                 value={spaceName}
-                onChange={(e: any) => setSpaceName(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSpaceName(e.target.value)}
             />
 
             {/* Box that contains the Create Server button, center contents and self*/}

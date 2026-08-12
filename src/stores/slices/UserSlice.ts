@@ -108,6 +108,10 @@ export const UserSlice = createSlice({
     /** Replaces the visible channel list (e.g. after switching servers). */
     setChannels: (state, action: PayloadAction<Channel[]>) => {
         state.visibleChannels = action.payload;
+        if (!state.visibleChannels.some(c => c.channelId === state.currentChannelId)) {
+            state.currentChannelId = state.visibleChannels[0]?.channelId ?? -1;
+            state.visibleMessages = [];
+        }
     },
     /** Replaces the visible message list (e.g. after switching channels or sending a message). */
     setMessages(state, action: PayloadAction<Message[]>) {

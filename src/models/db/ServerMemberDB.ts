@@ -1,3 +1,5 @@
+import type { ServerRole } from "../server-hierarchy/ServerRole";
+
 /**
  * DB-layer shape for a server membership record (join table).
  *
@@ -9,6 +11,7 @@
  * @see {@link docs/architecture.md#db-shapes} — DB shapes overview
  */
 export interface ServerMemberDB {
+    role: ServerRole;
     /** ID of the user who is a member. */
     user_id: number;
     /** ID of the server they belong to. */
