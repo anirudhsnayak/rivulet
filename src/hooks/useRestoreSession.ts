@@ -24,8 +24,8 @@ const STORAGE_HASH_KEY = 'rivulet_hash';
  * Reads the persisted username and SHA-256 hash from localStorage.
  * If both exist and `API_MODE === 'in-memory'`, attempts to re-authenticate
  * via the in-memory DB. On success, dispatches `setLoggedIn(true)` and
- * sets the current user name. In PostgreSQL mode, this is a no-op
- * (a future server-side session check would go here).
+ * sets the current user name. PostgreSQL mode checks the session cookie with
+ * the API; it does not require credentials in localStorage.
  *
  * @returns `true` once the restoration check has completed (regardless of
  *          whether the user was actually logged in).
@@ -34,6 +34,21 @@ export function useRestoreSession() {
     const [sessionRestored, setSessionRestored] = useState(false);
 
     useEffect(() => {
+        let active = true;
+        if (API_MODE === 'psql') {
+            fetch('http://localhost:3000/api/account/session', { credentials: 'include' })
+                .then(async response => {
+                    if (!response.ok) return;
+                    const user = await response.json();
+                    if (active) {
+                        store.dispatch(setLoggedIn(true));
+                        store.dispatch(setCurrentUserName(user.username));
+                    }
+                })
+                .catch(() => {})
+                .finally(() => { if (active) setSessionRestored(true); });
+            return () => { active = false; };
+        }
         const username = localStorage.getItem(STORAGE_USERNAME_KEY);
         const hash = localStorage.getItem(STORAGE_HASH_KEY);
 
@@ -42,20 +57,16 @@ export function useRestoreSession() {
             return;
         }
 
-        if (API_MODE === 'in-memory') {
-            inMemoryDB.login(username, hash).then((ok) => {
-                if (ok) {
-                    store.dispatch(setLoggedIn(true));
-                    store.dispatch(setCurrentUserName(username));
-                }
-                setSessionRestored(true);
-            }).catch(() => {
-                setSessionRestored(true);
-            });
-        } else {
-            // For psql mode, a future server-side session check would go here.
-            setSessionRestored(true);
-        }
+        inMemoryDB.login(username, hash).then((ok) => {
+            if (ok && active) {
+                store.dispatch(setLoggedIn(true));
+                store.dispatch(setCurrentUserName(username));
+            }
+            if (active) setSessionRestored(true);
+        }).catch(() => {
+            if (active) setSessionRestored(true);
+        });
+        return () => { active = false; };
     }, []);
 
     return sessionRestored;

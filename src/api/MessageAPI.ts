@@ -93,7 +93,9 @@ export async function requestMessages(serverId: number, channelId: number) {
 /**
  * Re-fetches messages for the currently selected channel and updates Redux state.
  */
+let reloadGeneration = 0;
 export async function reloadMessages(): Promise<void> {
+    const generation = ++reloadGeneration;
     const currentGuildId = store.getState().UserSlice.currentGuildId;
     const currentChannelId = store.getState().UserSlice.currentChannelId;
     if (currentGuildId === -1 || currentChannelId === -1) {
@@ -102,7 +104,7 @@ export async function reloadMessages(): Promise<void> {
     }
     const messages = await requestMessages(currentGuildId, currentChannelId);
     const latest = store.getState().UserSlice;
-    if (latest.currentGuildId !== currentGuildId || latest.currentChannelId !== currentChannelId) return;
+    if (generation !== reloadGeneration || latest.currentGuildId !== currentGuildId || latest.currentChannelId !== currentChannelId) return;
     if (!messages) return;
     const updatedMessages = messages.map((message: MessageDB) => {
         return Message(message.guild_id, message.channel_id, message.message_id, message.message_text, message.author_name);

@@ -35,6 +35,12 @@ npm run dev
 
 Then open the URL Vite prints (usually http://localhost:5173).
 
+To use the sibling `../rivulet-server` backend, set `VITE_API_MODE=psql` in
+`.env.local`. With PostgreSQL running and the backend dependencies, `.env`, and
+schema configured, run `npm run dev:server` from this directory. It starts the
+API using the backend's working directory and `.env`. Run `npm run dev` in a
+second terminal for the frontend.
+
 ### Dev credentials
 
 The in-memory backend seeds a ready-to-use account on first visit:
@@ -52,6 +58,7 @@ To start fresh, clear the site's `localStorage` to drop the persisted database a
 | Command | Description |
 |---|---|
 | `npm run dev` | Start the Vite dev server with HMR |
+| `npm run dev:server` | Start the sibling rivulet-server API |
 | `npm run build` | Type-check with `tsc -b`, then produce a production build |
 | `npm run lint` | Run ESLint over all source files |
 | `npm run preview` | Serve the production build locally |

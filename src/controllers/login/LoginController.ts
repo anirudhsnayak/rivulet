@@ -13,6 +13,7 @@ import { store } from "../../stores/store";
 import { setLoggedIn, setCurrentUserName } from "../../stores/slices/RivuletSlice";
 import { clearUserState } from "../../stores/slices/UserSlice";
 import { clearPersistence, inMemoryDB } from "../../api/InMemoryDB";
+import { API_MODE } from '../../api/ApiConfig';
 
 const STORAGE_USERNAME_KEY = 'rivulet_username';
 const STORAGE_HASH_KEY = 'rivulet_hash';
@@ -41,8 +42,10 @@ export async function handleLoginSignup(name: string, username: string, password
     if(successfulLogin) {
         store.dispatch(setLoggedIn(true));
         store.dispatch(setCurrentUserName(username));
-        localStorage.setItem(STORAGE_USERNAME_KEY, username);
-        localStorage.setItem(STORAGE_HASH_KEY, hash);
+        if (API_MODE === 'in-memory') {
+            localStorage.setItem(STORAGE_USERNAME_KEY, username);
+            localStorage.setItem(STORAGE_HASH_KEY, hash);
+        }
     }
     return successfulLogin;
 }
@@ -52,6 +55,10 @@ export async function handleLoginSignup(name: string, username: string, password
  * Redux state, and localStorage persistence.
  */
 export async function handleLogout() {
+    if (API_MODE === 'psql') {
+        const response = await fetch('http://localhost:3000/api/account/logout', { method: 'POST', credentials: 'include' });
+        if (!response.ok) throw new Error('Could not log out. Please try again.');
+    }
     inMemoryDB.clearSession();
     clearPersistence();
     store.dispatch(clearUserState());
@@ -71,12 +78,12 @@ export async function handleLogout() {
  * @returns The hex-encoded SHA-256 digest.
  */
 async function computeHash(username: string, password: string) : Promise<string> {
-    let saltedPassword = username + password;
-    let hashedPassword = await window.crypto.subtle.digest(
+    const saltedPassword = username + password;
+    const hashedPassword = await window.crypto.subtle.digest(
         'SHA-256',
         new TextEncoder().encode(saltedPassword)
     );
-    let hashArray = Array.from(new Uint8Array(hashedPassword));
-    let hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    const hashArray = Array.from(new Uint8Array(hashedPassword));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     return hashHex;
 }
